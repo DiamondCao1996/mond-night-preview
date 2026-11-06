@@ -9,6 +9,8 @@ function write(name, value) {
   if (typeof localStorage!=='undefined') localStorage.setItem(key(name),raw); else memory.set(key(name),raw);
   changed();
 }
+export const loadEmotions=()=>{const v=read('emotions',[]);return Array.isArray(v)?v:[];};
+export const saveEmotions=entries=>write('emotions',entries);
 export const loadProfile=()=>read('profile',{});
 export const saveProfile=p=>write('profile',p);
 export const loadLogs=()=>{const v=read('logs',[]);return Array.isArray(v)?v:[];};
@@ -19,7 +21,7 @@ export function loadNights() {
 }
 export const saveImportedNights=n=>write('nights',n);
 export function clearAllFactorData() {
-  for(const name of ['profile','logs','nights']) {memory.delete(key(name)); if(typeof localStorage!=='undefined')localStorage.removeItem(key(name));}
+  for(const name of ['profile','logs','nights','emotions']) {memory.delete(key(name)); if(typeof localStorage!=='undefined')localStorage.removeItem(key(name));}
   changed();
 }
 export function mergeLogsIntoNights(nights,logs) {
