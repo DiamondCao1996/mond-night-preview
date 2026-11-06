@@ -11,6 +11,7 @@ export function addEmotion(entry={}) {
   if(!/^\d{4}-\d{2}-\d{2}$/.test(saved.date)||!Number.isFinite(Date.parse(saved.date)))throw new TypeError('Invalid date');
   if(Number.isInteger(entry.intensity)&&entry.intensity>=1&&entry.intensity<=5)saved.intensity=entry.intensity;
   if(typeof entry.note==='string'&&entry.note.trim())saved.note=entry.note.trim();
+  if(entry.session && typeof entry.session==='object' && !Array.isArray(entry.session))saved.session=entry.session;
   const entries=[...loadEmotions(),saved];saveEmotions(entries);return entries;
 }
 export function deleteEmotion(id){const entries=loadEmotions();const i=entries.findIndex(e=>e.id===id);if(i>=0)entries.splice(i,1);saveEmotions(entries);return entries;}
@@ -38,4 +39,17 @@ export function exploreEmotionAssociations(nights,entries,{metric='hrvRmssdMs'}=
     return [core.id,base];
   }));
   return {status:Object.values(groups).some(g=>g.status==='ok')?'ok':'not-enough-data',metric,join:'same-date (night starting on check-in date)',groups};
+}
+
+// Copy only compact snapshot context; absent measurements stay absent.
+export function buildSessionLink(moment) {
+  const snapshot=moment.session||{},metrics={};
+  for(const key of ['hr','rmssd','sdnn'])if(Number.isFinite(snapshot.metrics?.[key]))metrics[key]=snapshot.metrics[key];
+  const link={metrics,source:snapshot.mode==='demo'?'sample-session':'sensor-session'};
+  for(const [key,value] of Object.entries({id:moment.id,sessionId:snapshot.session_id,savedAt:moment.saved_at,
+    mode:snapshot.mode,device:snapshot.device,elapsed:snapshot.elapsed,events:snapshot.events}))if(value!==undefined)link[key]=value;
+  return link;
+}
+export function latestSavedMoment(storage=globalThis.localStorage) {
+  try {const entries=JSON.parse(storage?.getItem('mond-sessions')||'[]');return Array.isArray(entries)?entries.at(-1):undefined;}catch{return undefined;}
 }

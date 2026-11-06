@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {EMOTION_WHEEL as wheel,flattenWheel,findEmotion,wheelCounts} from '../assets/engine/emotionWheel.js';
-import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations} from '../assets/engine/emotionLog.js';
+import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations,buildSessionLink,latestSavedMoment} from '../assets/engine/emotionLog.js';
 import {loadEmotions,loadNights,saveEmotions,clearAllFactorData} from '../assets/engine/store.js';
 test('printed wheel has complete vocabulary and distinct identifiers',()=>{
  assert.equal(wheel.length,7);assert.deepEqual(wheel.map(n=>n.zh),['恐惧','愤怒','厌恶','悲伤','快乐','惊讶','消极']);assert.deepEqual(wheel.map(n=>n.children.length),[6,8,4,6,9,4,4]);
@@ -63,4 +63,33 @@ test('feelings save without a device, nights or a live session',()=>{
   deleteEmotion('standalone-deep');
   assert.deepEqual(loadEmotions(),[]);
  }finally{clearAllFactorData();}
+});
+
+test('saved sample and sensor moments produce compact session links without invented metrics',()=>{
+ for(const mode of ['demo','sensor']){
+  const moment={id:`moment-${mode}`,saved_at:1234,session:{session_id:`session-${mode}`,mode,device:'MOND',elapsed:75,events:42,metrics:{hr:64,rmssd:32,sdnn:40,series:[1,2]},series:[1,2,3]}};
+  assert.deepEqual(buildSessionLink(moment),{id:`moment-${mode}`,sessionId:`session-${mode}`,savedAt:1234,mode,device:'MOND',elapsed:75,events:42,metrics:{hr:64,rmssd:32,sdnn:40},source:mode==='demo'?'sample-session':'sensor-session'});
+ }
+ assert.deepEqual(buildSessionLink({session:{metrics:{hr:null,rmssd:NaN,sdnn:Infinity}}}).metrics,{});
+ assert.deepEqual(buildSessionLink({session:{}}).metrics,{});
+});
+test('only explicit confirmation adds a linked emotion; skipping leaves the list unchanged',()=>{
+ try{
+  clearAllFactorData();
+  const moment={id:'saved-moment',saved_at:1234,session:{session_id:'live-session',mode:'demo',events:3,metrics:{hr:60}}};
+  addEmotion({path:[findEmotion('joy')]});
+  const before=loadEmotions();assert.equal(Object.hasOwn(before[0],'session'),false);
+  // The overlay skip/close path only closes its dialog, without calling addEmotion.
+  buildSessionLink(moment);
+  assert.deepEqual(loadEmotions(),before);
+  const session=buildSessionLink(moment);
+  addEmotion({path:[findEmotion('joy')],session,note:'Linked'});
+  assert.equal(loadEmotions().length,before.length+1);
+  assert.deepEqual(loadEmotions().at(-1).session,session);
+ }finally{clearAllFactorData();}
+});
+test('latest saved moment reads the existing bundle key and tolerates missing or corrupt storage',()=>{
+ const entries=[{id:'first'},{id:'last'}];
+ assert.deepEqual(latestSavedMoment({getItem:key=>{assert.equal(key,'mond-sessions');return JSON.stringify(entries);}}),entries[1]);
+ for(const raw of [null,'bad','{}','[]'])assert.equal(latestSavedMoment({getItem:()=>raw}),undefined);
 });

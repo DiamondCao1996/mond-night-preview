@@ -130,3 +130,5 @@ This milestone adds Stage 0 factor/output contracts and schema, a Stage 1 **impo
 The emotion compass is a three-level check-in transcribed from a printed wheel, with vocabulary kept in `assets/engine/emotionWheel.js`. Check-ins are saved locally through `store.js`, with optional intensity and note, and 7/30-local-day core distributions. An unadjusted, non-diagnostic exploratory view compares sample HRV/sleep (or imported nights), joining nights starting on the check-in date. Only good-quality overnight RMSSD nights from one device and days with check-ins are compared, with at least five nights per group; multiple check-ins do not duplicate nights. It is not causal, a clinical scale, or a mood/recovery score. No MOND cloud is used.
 
 Feelings can be logged without a sensor via `#feel`, while session “save this moment” still requires a live sensor or sample session.
+
+Saving a live sensor or sample moment opens an optional feeling overlay linked to that session; skip keeps the moment without a feeling.
