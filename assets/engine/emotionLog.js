@@ -27,7 +27,7 @@ export function emotionDistribution(entries,{days=7,now=new Date()}={}){
 export function exploreEmotionAssociations(nights,entries,{metric='hrvRmssdMs'}={}){
   if(!['hrvRmssdMs','sleepMinutes'].includes(metric))throw new RangeError('Unsupported metric');
   const dates=new Map();for(const e of entries){if(!dates.has(e.date))dates.set(e.date,new Set());dates.get(e.date).add(e.path?.[0]?.id);}
-  const eligible=nights.filter(n=>dates.has(n.date)&&n.quality==='good'&&n.metric==='RMSSD'&&n.window==='overnight'&&n.device&&Number.isFinite(n[metric]));
+  const eligible=(nights||[]).filter(n=>dates.has(n.date)&&n.quality==='good'&&n.metric==='RMSSD'&&n.window==='overnight'&&n.device&&Number.isFinite(n[metric]));
   const devices=[...new Set(eligible.map(n=>n.device))];
   const groups=Object.fromEntries(EMOTION_WHEEL.map(core=>{
     // Never pool different devices; use the largest comparable device series.

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {EMOTION_WHEEL as wheel,flattenWheel,findEmotion,wheelCounts} from '../assets/engine/emotionWheel.js';
 import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations} from '../assets/engine/emotionLog.js';
-import {loadEmotions,saveEmotions,clearAllFactorData} from '../assets/engine/store.js';
+import {loadEmotions,loadNights,saveEmotions,clearAllFactorData} from '../assets/engine/store.js';
 test('printed wheel has complete vocabulary and distinct identifiers',()=>{
  assert.equal(wheel.length,7);assert.deepEqual(wheel.map(n=>n.zh),['恐惧','愤怒','厌恶','悲伤','快乐','惊讶','消极']);assert.deepEqual(wheel.map(n=>n.children.length),[6,8,4,6,9,4,4]);
  const flat=flattenWheel();assert.equal(new Set(flat.map(n=>n.id)).size,flat.length);
@@ -35,4 +35,32 @@ test('associations require comparable groups and remain descriptive',()=>{
  for(const replacement of [{quality:'poor'},{metric:'SDNN'},{window:'daytime'},{hrvRmssdMs:null}])assert.equal(exploreEmotionAssociations(nights.map(n=>({...n,...replacement})),entries).status,'not-enough-data');
  assert.equal(exploreEmotionAssociations(nights,[]).status,'not-enough-data');
  assert.equal(exploreEmotionAssociations(nights.map((n,i)=>({...n,device:i<6?'a':'b'})),entries).status,'not-enough-data');
+});
+
+test('feelings save without a device, nights or a live session',()=>{
+ try{
+  clearAllFactorData();
+  assert.equal(loadNights(),null);
+  addEmotion({id:'standalone-core',path:[findEmotion('joy')]});
+  addEmotion({id:'standalone-deep',path:[findEmotion('fear'),findEmotion('anxious'),findEmotion('worried')],note:'  Just my words  ',intensity:4});
+  const entries=loadEmotions();
+  assert.equal(entries.length,2);
+  assert.equal(entries[0].path.length,1);
+  assert.equal(entries[0].note,undefined);
+  assert.equal(entries[0].intensity,undefined);
+  assert.equal(entries[1].path.length,3);
+  assert.equal(entries[1].note,'Just my words');
+  assert.equal(entries[1].intensity,4);
+  assert.equal(loadNights(),null);
+  for(const nights of [loadNights(),[]])for(const metric of ['hrvRmssdMs','sleepMinutes']){
+   const result=exploreEmotionAssociations(nights,entries,{metric});
+   assert.equal(result.status,'not-enough-data');
+   assert.ok(Object.values(result.groups).every(g=>g.status==='not-enough-data'&&g.nWith===0&&g.nWithout===0));
+   assert.ok(!/"[^"\n]*(diagnosis|risk|yearsOfLife)[^"\n]*"\s*:/i.test(JSON.stringify(result)));
+  }
+  deleteEmotion('standalone-core');
+  assert.deepEqual(loadEmotions().map(e=>e.id),['standalone-deep']);
+  deleteEmotion('standalone-deep');
+  assert.deepEqual(loadEmotions(),[]);
+ }finally{clearAllFactorData();}
 });
