@@ -31,8 +31,8 @@ refresh();
 
 function sessionSummary(session,lang,details=false) {
  const zh=lang==='zh-CN',parts=[session.mode==='demo'?(zh?'示例记录':'Sample session'):(zh?'传感器记录':'Sensor session')];
- if(Number.isFinite(session.metrics?.hr))parts.push(`HR ${session.metrics.hr} bpm`);
- if(Number.isFinite(session.metrics?.rmssd))parts.push(`RMSSD ${session.metrics.rmssd} ms`);
+ if(Number.isFinite(session.metrics?.hr))parts.push(`HR ${Math.round(session.metrics.hr)} bpm`);
+ if(Number.isFinite(session.metrics?.rmssd))parts.push(`RMSSD ${Number(session.metrics.rmssd).toFixed(1)} ms`);
  if(details&&Number.isFinite(session.events))parts.push(`${session.events} ${zh?'个事件':'events'}`);
  if(details&&Number.isFinite(session.elapsed))parts.push(`${Math.floor(session.elapsed)} ${zh?'秒':'seconds'}`);
  return parts.join(' · ');
