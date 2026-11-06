@@ -1,3 +1,5 @@
+import {mountChips} from './suggestionChips.js';
+import {loadEmotions} from './engine/store.js';
 import {openForest,strategyLinks} from './forestAid.js';
 import {FIRST_AID_STRATEGIES,FIRST_AID_COPY,invitationForEntry,saveFirstAidExercise,loadFirstAid} from './engine/firstAid.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -39,8 +41,9 @@ function render(focus=false){
  host.innerHTML=`${strategyLinks()}<article class="card aid-panel"><p class="aid-progress">${step<5?`${step+1} / 5`:'♡'}</p><h2 tabindex="-1">${esc(heading)}</h2>${content}${step<5?`<div class="aid-actions">${step?`<button class="outline" data-back>${esc(t.back)}</button>`:''}<button class="primary" data-next ${valid()?'':'disabled'}>${esc(step===4?t.finish:t.next)}</button></div>`:''}<p role="status" class="aid-error"></p><p class="aid-safety">${esc(t.safety)}</p></article><article class="card aid-panel"><h2>${esc(t.history)}</h2>${loadFirstAid().filter(e=>e.strategyId==='safe-space-within').length?loadFirstAid().filter(e=>e.strategyId==='safe-space-within').reverse().map(e=>`<div class="aid-history"><time>${esc(e.date)}</time> · ${e.before} → ${e.after}<p><i style="background:${strategy.colors.includes(e.color)?e.color:'transparent'}"></i>${esc(e.color)} · ${esc(label(strategy.sizes.find(x=>x.id===e.size)))} · ${esc(e.texture==='custom'?e.textureCustom:label(strategy.textures.find(x=>x.id===e.texture)))}</p></div>`).join(''):`<p>${esc(t.empty)}</p>`}</article>`;
  const bind=(selector,fn)=>host.querySelectorAll(selector).forEach(el=>el.onclick=()=>fn(el));
  bind('[data-drop]',el=>{draft[step===0?'before':'after']=Number(el.dataset.drop);render();host.querySelector(`[data-drop="${el.dataset.drop}"]`).focus();});
- for(const key of ['color','size','texture'])bind(`[data-${key}]`,el=>{draft[key]=el.dataset[key];render();host.querySelector(`[data-${key}="${el.dataset[key]}"]`).focus();});
+ for(const key of ['color','size','texture'])bind(`[data-${key}]`,el=>{draft[key]=el.dataset[key];host.querySelectorAll(`[data-${key}]`).forEach(b=>b.setAttribute('aria-pressed',String(b===el)));if(key==='color')host.querySelectorAll('.aid-cloud path').forEach(p=>p.setAttribute('fill',draft.color));host.querySelector('[data-next]').disabled=!valid();});
  const input=host.querySelector('input');if(input)input.oninput=()=>{draft.texture='custom';draft.textureCustom=input.value;host.querySelectorAll('[data-texture]').forEach(el=>el.setAttribute('aria-pressed','false'));host.querySelector('[data-next]').disabled=!valid();};
+ if(input)mountChips(input,{field:'texture',path:loadEmotions().find(e=>e.id===linkedEmotionId)?.path||[]});
  bind('[data-back]',()=>{step--;render(true);});bind('[data-again]',()=>{reset();render(true);});
  bind('[data-next]',()=>{if(!valid())return;if(step===4){try{saveFirstAidExercise({...draft,strategyId:strategy.id,emotionId:linkedEmotionId});linkedEmotionId=undefined;}catch{host.querySelector('.aid-error').textContent=t.error;return;}}step++;render(true);});
  if(focus)host.querySelector('h2').focus();

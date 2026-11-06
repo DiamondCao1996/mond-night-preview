@@ -114,7 +114,7 @@ export function saveForestExercise(input){
  if(!leaf||!forest.leafShapes.some(s=>s.id===leaf.shape)||!['light','heavy'].includes(leaf.weight)||!/^#[0-9a-f]{6}$/i.test(leaf.color)||typeof leaf.name!=='string'||!leaf.name.trim()||input.cloudReleased!==true)throw new TypeError('Complete the leaf, self-care, and cloud release before saving.');
  const record={id:globalThis.crypto?.randomUUID?.()||`forest-${Date.now()}-${Math.random().toString(36).slice(2)}`,utc:new Date().toISOString(),date:localDate(),strategyId:'forest-leaves',leaf:{shape:leaf.shape,weight:leaf.weight,color:leaf.color,name:leaf.name.trim().slice(0,120)},tend:true,cloudReleased:true};
  if(input.emotionId)record.emotionId=input.emotionId;
- for(const key of ['occurrence','requirement','ethos','source'])if(typeof input[key]==='string'&&input[key].trim())record[key]=input[key].trim().slice(0,4000);
+ for(const key of ['occurrence','requirement','ethos','source','tendNote'])if(typeof input[key]==='string'&&input[key].trim())record[key]=input[key].trim().slice(0,4000);
  if(input.butterfly)record.butterfly={note:String(input.butterfly.note||'').trim().slice(0,4000)};
  saveFirstAid([...loadFirstAid(),record]);return record;
 }

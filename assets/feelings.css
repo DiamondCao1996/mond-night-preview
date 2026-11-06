@@ -3,3 +3,18 @@
 .feel-open{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;margin:8px 8px 12px 0;border:1px solid var(--line,#dce3d9);border-radius:24px;background:#edf2e5;color:var(--ink,#253c32);font-weight:600;text-decoration:none}.feel-open:hover{background:#e0e9d6}.feel-open:focus-visible{outline:2px solid var(--ink,#253c32);outline-offset:3px}.emotion-optional{padding:14px 18px;border-radius:18px;background:#edf2e5;font-size:14px}
 
 .moment-compass{box-sizing:border-box;width:min(560px,calc(100% - 24px));max-height:90dvh;overflow:auto;border:1px solid var(--line,#dce3d9);border-radius:28px;background:var(--paper,#faf9f3);color:var(--ink,#253c32);box-shadow:0 20px 80px #253c3233;padding:28px}.moment-compass::backdrop{background:#253c3266;backdrop-filter:blur(3px)}.moment-compass h2{font-size:24px}.moment-compass .emotion-wheel{max-width:320px}.emotion-context{font-size:13px;color:var(--green,#52725c);background:#edf2e5;border-radius:14px;padding:10px 14px}@media(max-width:600px){.moment-compass{margin:auto auto 0;width:100%;max-height:92dvh;border-radius:28px 28px 0 0;padding:20px 20px max(20px,env(safe-area-inset-bottom))}}
+
+.suggest-chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px;min-width:0}
+.suggest-chips button{min-height:44px;max-width:100%;padding:10px 14px;border:1px solid var(--line,#e3e6db);border-radius:18px;background:#edf1e5;color:var(--ink,#2d433c);font-size:13px;line-height:1.65;text-align:left;white-space:normal;overflow-wrap:anywhere;touch-action:manipulation;transition:background 180ms ease,border-color 180ms ease}
+.suggest-chips button[aria-pressed=true]{background:#dfe9d3;border-color:#91a789}
+.suggest-chips .suggest-more{background:transparent;color:var(--muted,#667369);border-color:transparent}
+.emotion-wheel g[data-emotion],dialog{touch-action:manipulation}
+.moment-compass{padding:28px 32px;width:min(560px,calc(100% - 28px));border-radius:26px}
+.moment-compass .emotion-wheel{width:calc(100% - 16px);max-width:320px;overflow:visible;margin:12px auto 20px}
+.emotion-wheel text{font-size:10.5px}.emotion-wheel:lang(zh-CN) text{font-size:10px}
+.compass-enter{animation:compass-arrive 180ms ease both;transform-origin:center}
+@keyframes compass-arrive{from{opacity:.6;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
+body:has(#feel-view:not([hidden]),#journal-view:not([hidden]),#safe-space-view:not([hidden]),#forest-view:not([hidden]),#box-breathing-view:not([hidden])) #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px));max-width:min(280px,calc(100vw - 48px));width:max-content;z-index:20;pointer-events:none}
+@media(max-width:540px){.moment-compass{padding:24px;width:calc(100% - 28px)}.emotion-panel form>.primary{min-height:48px}}
+@media(prefers-reduced-motion:reduce){.compass-enter{animation:none}.suggest-chips button{transition:none}}
+body:has(#feel-view:not([hidden]),#journal-view:not([hidden]),#safe-space-view:not([hidden]),#forest-view:not([hidden]),#box-breathing-view:not([hidden])) #toast.show{display:block!important}
