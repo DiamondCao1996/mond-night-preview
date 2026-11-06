@@ -1,5 +1,6 @@
 import {FIRST_AID_DEFAULTS} from './engine/firstAid.js';
 import {mountChips,collapseOptional} from './suggestionChips.js';
+import {offerMomentCare} from './pmr.js';
 import {offerFirstAid} from './firstAid.js';
 import {EMOTION_WHEEL,findEmotion} from './engine/emotionWheel.js';
 import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations,localDate,buildSessionLink,latestSavedMoment} from './engine/emotionLog.js';
@@ -51,7 +52,7 @@ function openMomentCompass(moment) {
  const dialog=document.createElement('dialog');dialog.className='moment-compass emotion-panel';
  dialog.setAttribute('aria-labelledby','moment-compass-title');
  // This trail and form state belong only to this saved moment.
- let path=[],momentNote='',momentIntensity=String(FIRST_AID_DEFAULTS.intensity);
+ let path=[],momentNote='',momentIntensity=String(FIRST_AID_DEFAULTS.intensity),savedEntry;
  const draw=()=>{
   const lang=document.getElementById('language')?.value||document.documentElement.lang,t=copy[lang]||copy.en,zh=lang==='zh-CN';
   const label=n=>n?.[zh?'zh':lang==='sv'?'sv':'en']||n?.en||'';
@@ -70,11 +71,11 @@ function openMomentCompass(moment) {
   dialog.querySelector('[data-skip]').onclick=()=>dialog.close();
   dialog.querySelector('form').onsubmit=e=>{e.preventDefault();if(!path.length)return;try{
    const saved=addEmotion({path,intensity:momentIntensity?Number(momentIntensity):undefined,note:momentNote,session:buildSessionLink(moment)});
+   savedEntry=saved.at(-1);
    dialog.close();
-   offerFirstAid(saved.at(-1));
   }catch(error){dialog.querySelector('[role="alert"]').textContent=error.message;}};
  };
- dialog.addEventListener('close',()=>dialog.remove(),{once:true});
+ dialog.addEventListener('close',()=>{dialog.remove();offerMomentCare(moment,savedEntry);},{once:true});
  const languageChange=()=>draw();window.addEventListener('mond-language-change',languageChange);
  dialog.addEventListener('close',()=>window.removeEventListener('mond-language-change',languageChange),{once:true});
  document.body.append(dialog);draw();dialog.showModal();

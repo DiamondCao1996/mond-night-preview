@@ -140,3 +140,12 @@ FOREST’s tree exercise and 4-4-4-4 box breathing are digitized from the verifi
 The FOREST garden now offers three softly illustrated SVG tree variants (willow by default), branch buds that bloom as steps finish, and saved leaves at stable branch tips. Reflection layouts leave room for mobile navigation and scrollable dialogs; selection taps update previews in place and feelings charts reuse unchanged data. Optional, editable suggestion chips accompany free-text reflections and session notes, using local bilingual, emotion-aware, non-clinical phrases; no remote service is involved.
 
 First-aid defaults live in `FIRST_AID_DEFAULTS` in `assets/engine/firstAid.js`. Shared draft helpers seed valid Forest and Safe Space reflections, including unchanged before/after intensity. A single recommended invitation, optional writing, and progressive disclosure reduce choices; users can still change every field. Continue releases the forest leaf, and box breathing starts with four rounds.
+
+PMR (`#relax`) runs a default ten-zone head-to-toe practice with optional writing and
+local completions in `mond-factors-pmr` (included in factor-data clearing). Its
+original SVG highlights the active zone; reduced motion removes decorative motion.
+`assets/engine/pmr.js` owns the zone transcription, trigger configuration, sensor-only
+quiet-sample mean and saved-window quality checks. Invitations use only the just-saved
+sensor moment and `mond-profile.baselines.sensor`, never demo or overnight priors.
+After the moment compass closes, a single decision combines PMR and emotion care,
+with PMR as the sole primary action when both apply. Home access needs no sensor.

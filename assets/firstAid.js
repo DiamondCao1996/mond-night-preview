@@ -16,8 +16,9 @@ const icons={
 };
 const drop=n=>`<svg viewBox="0 0 40 52" aria-hidden="true"><path d="M20 3C17 13 4 27 4 34a16 16 0 0 0 32 0C36 27 23 13 20 3Z"/></svg><span>${n}</span>`;
 function reset(){step=0;draft=applySafeSpaceDefaults();linkedEmotionId=undefined;}
-export function offerFirstAid(entry){
+export function offerFirstAid(entry,options={}){
  const invitation=invitationView(entry);if(!invitation)return;
+ if(options.direct){reset();draft=applySafeSpaceDefaults(entry);linkedEmotionId=entry.id;if(options.strategyId==='forest-leaves'){openForest(entry);location.hash='forest';}else{strategy=FIRST_AID_STRATEGIES[0];location.hash='safe-space';render();}return;}
  document.getElementById('first-aid-invitation')?.close();
  const dialog=document.createElement('dialog');dialog.id='first-aid-invitation';dialog.className='first-aid-dialog';dialog.setAttribute('aria-labelledby','first-aid-invite-title');
  const draw=()=>{const t=text(),zh=language()==='zh-CN',forest=invitation.primary.id==='forest-leaves';dialog.innerHTML=`<h2 id="first-aid-invite-title">${esc(forest?(zh?'要不要走进森林，安放这片叶子？':'Would you like to enter the forest and let this leaf rest?'):t.invite)}</h2><div class="aid-actions"><button class="primary" data-strategy="${invitation.primary.id}">${esc(forest?(zh?'去森林里坐一会儿':'Sit in the forest for a while'):(zh?'去情绪急救角坐一会':'Sit in the Safe Space for a while'))}</button>${invitation.alternative?`<a class="text-button" href="#${invitation.alternative.id==='forest-leaves'?'forest':'safe-space'}" data-strategy="${invitation.alternative.id}">${esc(invitation.alternative.id==='forest-leaves'?(zh?'或者试试森林':'or try the forest'):(zh?'或者试试情绪急救角':'or try Safe Space Within'))}</a>`:''}<button class="text-button" data-no>${esc(t.no)}</button></div>`;

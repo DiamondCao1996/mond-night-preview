@@ -13,6 +13,8 @@ export const loadEmotions=()=>{const v=read('emotions',[]);return Array.isArray(
 export const saveEmotions=entries=>write('emotions',entries);
 export const loadFirstAid=()=>{const v=read('first-aid',[]);return Array.isArray(v)?v:[];};
 export const saveFirstAid=entries=>write('first-aid',entries);
+export const loadPmr=()=>{const v=read('pmr',[]);return Array.isArray(v)?v:[];};
+export const savePmr=entries=>write('pmr',entries);
 export const loadProfile=()=>read('profile',{});
 export const saveProfile=p=>write('profile',p);
 export const loadLogs=()=>{const v=read('logs',[]);return Array.isArray(v)?v:[];};
@@ -23,7 +25,7 @@ export function loadNights() {
 }
 export const saveImportedNights=n=>write('nights',n);
 export function clearAllFactorData() {
-  for(const name of ['profile','logs','nights','emotions','first-aid']) {memory.delete(key(name)); if(typeof localStorage!=='undefined')localStorage.removeItem(key(name));}
+  for(const name of ['profile','logs','nights','emotions','first-aid','pmr']) {memory.delete(key(name)); if(typeof localStorage!=='undefined')localStorage.removeItem(key(name));}
   changed();
 }
 export function mergeLogsIntoNights(nights,logs) {
