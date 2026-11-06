@@ -149,3 +149,9 @@ quiet-sample mean and saved-window quality checks. Invitations use only the just
 sensor moment and `mond-profile.baselines.sensor`, never demo or overnight priors.
 After the moment compass closes, a single decision combines PMR and emotion care,
 with PMR as the sole primary action when both apply. Home access needs no sensor.
+
+## Weekly Inner Review
+
+`#review` is sensor free. `assets/engine/innerReview.js` groups existing emotion, first-aid, PMR and factor-log records into six notebook bands by local ISO week (stored `date` takes precedence over timestamps). It never creates sample records. FOREST writing supplies triggers, needs and reframing; ordinary notes never become inferred beliefs. Energy groupings reflect compass cores, not a clinical assessment. One optional tiny-step phrase is selected from localized engine configuration and is saved only when accepted.
+
+User lines are stored separately in `mond-inner-review`, keyed by ISO week and column (`emotion`, `behavior`, `body`, `belief`, `energy`, `step`); energy lines carry `nourish` or `drain`. Opening or switching weeks only reads storage. Clearing factor data also removes this key. Optional sensor comparisons use saved sensor sessions and compatible quiet samples from `mond-profile.baselines.sensor`; absent finite measurements or baselines produce no sensor text. No sensor, session or HRV is needed to write a review.

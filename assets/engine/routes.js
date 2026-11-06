@@ -1,5 +1,5 @@
 // These pages are always available, independent of device or saved data.
-export const SENSOR_FREE_VIEWS = Object.freeze(['relax', 'feel', 'safe-space', 'forest', 'box-breathing']);
+export const SENSOR_FREE_VIEWS = Object.freeze(['review', 'relax', 'feel', 'safe-space', 'forest', 'box-breathing']);
 
 export function viewForHash(hash, doc = globalThis.document) {
  const id = String(hash || '').replace(/^#/, '');
