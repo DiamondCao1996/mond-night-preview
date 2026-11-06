@@ -2,6 +2,31 @@ import {EMOTION_WHEEL,findEmotion} from './emotionWheel.js';
 import {loadFirstAid,saveFirstAid} from './store.js';
 import {localDate} from './emotionLog.js';
 const bilingual=(zh,en)=>({zh,en});
+export const FIRST_AID_DEFAULTS={
+ intensity:3,
+ leafShapeByNode:{anger:'sharp',anxious:'curled',sadness:'drooping',low:'soft',fear:'curled',disgust:'jagged',joy:'round',surprise:'round'},
+ leafWeightByIntensity:{1:'light',2:'light',3:'light',4:'heavy',5:'heavy'},
+ textureByCore:{anger:'burning',fear:'constricted',sadness:'heavy',low:'mushy',disgust:'knotted'},
+ sizeByIntensity:{1:'bubbles',2:'starfish',3:'lamb',4:'lamb',5:'whale'},
+ boxBreathingRounds:4
+};
+const intensityFor=entry=>Number.isInteger(entry?.intensity)&&entry.intensity>=1&&entry.intensity<=5?entry.intensity:FIRST_AID_DEFAULTS.intensity;
+function defaultContext(entry){
+ const path=entry?.path||[],ids=[...new Set(path.flatMap(n=>trailFor(n.id)||[n.id]))];
+ return {path,ids,core:findEmotion(ids[0])};
+}
+export function defaultsForForest(entry){
+ const {path,ids,core}=defaultContext(entry),node=path.at(-1),known=findEmotion(node?.id);
+ return {shape:[...ids].reverse().map(id=>FIRST_AID_DEFAULTS.leafShapeByNode[id]).find(Boolean)||'round',weight:FIRST_AID_DEFAULTS.leafWeightByIntensity[intensityFor(entry)],color:core?.color||'#a4b6a0',name:node?.zh||known?.zh||node?.en||known?.en||'一片叶子'};
+}
+export function defaultsForSafeSpace(entry){
+ const {core}=defaultContext(entry),before=intensityFor(entry);
+ return {before,color:core?.color||'#a4b6a0',size:FIRST_AID_DEFAULTS.sizeByIntensity[before],texture:FIRST_AID_DEFAULTS.textureByCore[core?.id]||'hollow'};
+}
+export function applyForestDefaults(entry){return {leaf:defaultsForForest(entry),...(entry?.id?{emotionId:entry.id}:{}),emotionPath:entry?.path||[]};}
+export function applySafeSpaceDefaults(entry){const defaults=defaultsForSafeSpace(entry);return {...defaults,after:defaults.before,strategyId:'safe-space-within',...(entry?.id?{emotionId:entry.id}:{})};}
+// Only primary is the main CTA; alternative and dismiss are quiet text links.
+export function invitationView(entry){const invitation=invitationForEntry(entry);return invitation?{primary:invitation.primary,alternative:invitation.alternatives[0]||null,dismiss:true}:null;}
 export const FIRST_AID_TRIGGER={
  minIntensity:4,defaultCoreIds:['fear','anger','disgust','sadness','low'],strategyByNodeId:{},
  forestAnyIntensity:{strategyId:'forest-leaves',alternatives:['safe-space-within'],coreIds:['anger','fear','disgust'],nodeIds:['aggressive'],includeDescendants:true,anyIntensity:true},
@@ -34,7 +59,7 @@ export const strategyForEntry=entry=>invitationForEntry(entry)?.primary||null;
 export {loadFirstAid};
 export function saveFirstAidExercise(input){
  const strategy=FIRST_AID_STRATEGIES.find(s=>s.id===input.strategyId);
- if(strategy?.id!=='safe-space-within'||!['before','after'].every(k=>Number.isInteger(input[k])&&input[k]>=1&&input[k]<=5)||!strategy.colors.includes(input.color)||!strategy.sizes.some(s=>s.id===input.size)||!(strategy.textures.some(t=>t.id===input.texture)||(input.texture==='custom'&&input.textureCustom?.trim())))throw new TypeError('Complete each reflection before saving.');
+ if(strategy?.id!=='safe-space-within'||!['before','after'].every(k=>Number.isInteger(input[k])&&input[k]>=1&&input[k]<=5)||!/^#[0-9a-f]{6}$/i.test(input.color)||!strategy.sizes.some(s=>s.id===input.size)||!(strategy.textures.some(t=>t.id===input.texture)||(input.texture==='custom'&&input.textureCustom?.trim())))throw new TypeError('Complete each reflection before saving.');
  const utc=new Date().toISOString();
  const saved={id:globalThis.crypto?.randomUUID?.()||`first-aid-${Date.now()}-${Math.random().toString(36).slice(2)}`,utc,date:localDate(),strategyId:strategy.id,before:input.before,after:input.after,color:input.color,size:input.size,texture:input.texture};
  if(input.emotionId)saved.emotionId=input.emotionId;
@@ -98,7 +123,7 @@ FIRST_AID_STRATEGIES.push({
  ['想象自己是一棵树，脚像根扎入大地。觉察今天的情绪：它像哪种叶子？焦虑、愤怒、喜悦……','Imagine you are a tree, your feet rooted in the earth. Notice today’s emotion: what kind of leaf is it? Anxiety, anger, joy…'],
  ['在树上画下叶子，用颜色、形状表达你此刻的感受。可在旁写下情绪名字。','Draw leaves on the tree, using colors and shapes to express how you feel now. You may write the emotion’s name beside them.'],
  ['描摹接纳语句：“我练习做一棵不评判的树，叶子不是我，它只是被我觉察的当下。”','Trace the words of acceptance: “I practice being a tree that does not judge. The leaf is not me; it is simply the present moment I am noticing.”']]),acceptance},
- leafShapes:[['curled','卷曲','Curled'],['sharp','尖利','Sharp'],['round','圆润','Round'],['jagged','锯齿','Jagged']].map(([id,zh,en])=>({id,zh,en}))
+ leafShapes:[['curled','卷曲','Curled'],['sharp','尖利','Sharp'],['round','圆润','Round'],['jagged','锯齿','Jagged'],['drooping','低垂','Drooping'],['soft','柔软','Soft']].map(([id,zh,en])=>({id,zh,en}))
 },{
  id:'box-breathing',title:bilingual('4-4-4-4盒式呼吸法','4-4-4-4 box breathing'),seconds:4,cycles:[4,6],
  steps:pairs([

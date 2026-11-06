@@ -271,3 +271,5 @@ export function suggestionsFor({field,path=[],lang='en'}) {
  const bucket=[...path].reverse().map(n=>data[n.id]).find(Boolean);
  return [...new Set([...(bucket?.[key]||[]),...data.generic[key]])];
 }
+
+export const suggestionPrimary=options=>suggestionsFor(options)[0]||'';

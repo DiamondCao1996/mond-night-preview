@@ -55,3 +55,29 @@ test('FOREST exercises round-trip, validate, delete, and clear alongside Safe Sp
  const safe=saveFirstAidExercise({strategyId:'safe-space-within',before:4,after:2,color:'#8fb8cf',size:'whale',texture:'heavy'});deleteFirstAid(saved.id);assert.deepEqual(loadFirstAid(),[safe]);saveForestExercise(input);clearAllFactorData();assert.deepEqual(loadFirstAid(),[]);
  }finally{clearAllFactorData();}
 });
+
+test('shared defaults follow the leaf, ancestors, core, and intensity',async()=>{
+ const {FIRST_AID_DEFAULTS,defaultsForForest,defaultsForSafeSpace}=await import('../assets/engine/firstAid.js');
+ for(const [id,n,shape] of [['anger',3,'sharp'],['anxious',2,'curled'],['sadness',4,'drooping'],['low',5,'soft'],['hostile',3,'sharp'],['worried',2,'curled']]){
+  const leaf=defaultsForForest(entry(id,n));assert.equal(leaf.shape,shape);assert.equal(leaf.weight,n>=4?'heavy':'light');assert.ok(leaf.name);
+ }
+ assert.equal(defaultsForForest(entry('anger',3)).color,'#e89a5b');
+ assert.equal(defaultsForForest(entry('anger')).weight,'light');assert.equal(FIRST_AID_DEFAULTS.intensity,3);
+ for(const [id,texture] of Object.entries({sadness:'heavy',anger:'burning',fear:'constricted',low:'mushy',disgust:'knotted'}))assert.equal(defaultsForSafeSpace(entry(id,4)).texture,texture);
+ for(const [n,size] of [[1,'bubbles'],[2,'starfish'],[3,'lamb'],[4,'lamb'],[5,'whale']])assert.equal(defaultsForSafeSpace(entry('sadness',n)).size,size);
+ assert.equal(defaultsForSafeSpace({}).before,3);assert.equal(defaultsForSafeSpace({}).texture,'hollow');assert.equal(FIRST_AID_DEFAULTS.boxBreathingRounds,4);
+});
+test('invitation view exposes exactly one main recommendation',async()=>{
+ const {invitationView}=await import('../assets/engine/firstAid.js');
+ const view=invitationView(entry('anger',3));assert.equal(view.primary.id,'forest-leaves');assert.equal(view.alternative.id,'safe-space-within');assert.equal(view.dismiss,true);
+ assert.equal(invitationView(entry('sadness',4)).primary.id,'safe-space-within');assert.equal(invitationView(entry('joy',3)),null);
+});
+test('Continue-only default drafts save without optional writing',async()=>{
+ const {applyForestDefaults,applySafeSpaceDefaults,saveForestExercise}=await import('../assets/engine/firstAid.js');
+ try{
+ clearAllFactorData();const forest=saveForestExercise({...applyForestDefaults({...entry('anger',3),id:'anger-entry'}),cloudReleased:true,tend:true});
+ assert.equal(forest.leaf.shape,'sharp');assert.equal(forest.emotionId,'anger-entry');assert.equal(forest.occurrence,undefined);
+ const safe=saveFirstAidExercise(applySafeSpaceDefaults({...entry('sadness',4),id:'sad-entry'}));assert.equal(safe.before,4);assert.equal(safe.after,4);assert.equal(safe.texture,'heavy');
+ saveFirstAidExercise(applySafeSpaceDefaults());saveForestExercise({...applyForestDefaults(),cloudReleased:true,tend:true});
+ }finally{clearAllFactorData();}
+});

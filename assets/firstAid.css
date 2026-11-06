@@ -28,3 +28,11 @@
 @media(prefers-reduced-motion:reduce){.tree-step .bud-bloom{transform:none;transition:none}.cloud-release .forest-leaf,.leaf-preview path,.aid-shapes path{transition:none}}
 .forest-tree .tree-leaf{display:block}
 @media(max-width:540px){.forest-tree .tree-step text{font-size:16px;letter-spacing:.2px}}
+
+.suggest-ghost{font-size:.9em;color:#64766b;background:transparent;border:0;text-align:start;font-style:italic;padding:6px 0;cursor:pointer}
+.suggest-more{font-size:.85em;background:transparent;border:0;color:#64766b;cursor:pointer}
+#first-aid-invitation .aid-actions{grid-template-columns:1fr}
+#first-aid-invitation .text-button{background:transparent;border:0;box-shadow:none;text-align:center;font-size:.9em;color:#64766b;padding:8px;text-decoration:underline;text-underline-offset:3px}
+.aid-progress{letter-spacing:.3em;color:#718b79;font-size:.85em}
+.aid-panel details summary,.emotion-panel details summary{cursor:pointer;color:#64766b;padding-block:10px}
+.aid-other-strategies{margin-bottom:16px}.aid-other-strategies summary{cursor:pointer;color:#64766b}

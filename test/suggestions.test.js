@@ -7,3 +7,11 @@ test('anger occurrence and its descendants inherit the right words',()=>{for(con
 test('unknown paths fall back to generic in the requested language',()=>{for(const lang of ['zh-CN','en','sv'])assert.deepEqual(suggestionsFor({field:'note',path:[{id:'unknown'}],lang}),SUGGESTIONS.note.generic[lang==='zh-CN'?'zh':'en']);});
 test('lookup fills short buckets from static generic data',()=>{SUGGESTIONS.note.test={zh:['一片小叶子'],en:['A little leaf']};try{assert.ok(suggestionsFor({field:'note',path:[{id:'test'}],lang:'en'}).length>=4);}finally{delete SUGGESTIONS.note.test;}});
 test('suggestion data excludes harmful phrases',()=>{for(const buckets of Object.values(SUGGESTIONS))for(const pair of Object.values(buckets))for(const words of Object.values(pair))for(const word of words)assert.doesNotMatch(word,/自杀|自残|kill myself|suicide|self-harm/i);});
+
+test('one primary suggestion is the best-fit first phrase',async()=>{
+ const {suggestionPrimary}=await import('../assets/engine/suggestions.js');
+ for(const field of fields)for(const lang of ['en','zh-CN']){
+ const options={field,path:[{id:'anger'}],lang};assert.equal(suggestionPrimary(options),suggestionsFor(options)[0]);
+ }
+ assert.equal(suggestionPrimary({field:'unknown'}),'');
+});
