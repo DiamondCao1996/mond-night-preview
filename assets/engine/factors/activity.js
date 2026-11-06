@@ -16,7 +16,7 @@ export default {
     "31",
     "36"
   ],
-  "evidenceStrength": "rct-meta",
+  "evidenceStrength": "meta-rct",
   "association": {
     "targets": [
       "hrv"
@@ -54,5 +54,29 @@ export default {
     "sv": "Behåll belastningskontext; framtida råd kräver interventionsprövning."
   },
   "existingModel": "HeartSteps centered and weighted least squares.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Meta-analysis of 16 randomized trials",
+      "citations": [
+        "36"
+      ],
+      "detail": {
+        "en": "Meta-analysis of 16 RCTs: exercise training improved resting SDNN, RMSSD and HF.",
+        "zh-CN": "16 项 RCT 的荟萃分析：运动训练改善静息 SDNN、RMSSD 和 HF。",
+        "sv": "Metaanalys av 16 RCT: träning förbättrade SDNN, RMSSD och HF i vila."
+      }
+    },
+    {
+      "design": "HeartSteps microrandomized trial: walking prompts increased steps, not an HRV effect",
+      "citations": [
+        "31"
+      ],
+      "detail": {
+        "en": "HeartSteps microrandomized walking prompts increased subsequent steps; this is not an HRV effect.",
+        "zh-CN": "HeartSteps 微随机步行提示增加随后步数；这不是 HRV 效应。",
+        "sv": "Mikrorandomiserade gångförslag i HeartSteps ökade efterföljande steg; detta är ingen HRV-effekt."
+      }
+    }
+  ]
 };

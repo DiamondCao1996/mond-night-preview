@@ -45,3 +45,4 @@ export function evaluateFactor(id, ctx = {}) {
   }
   return assertSafeFactorOutput(factor, result);
 }
+export {EVIDENCE_STRENGTH_LABELS, literatureCell} from './labels.js';

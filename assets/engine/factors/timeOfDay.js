@@ -53,5 +53,18 @@ export default {
     "sv": "Använd cyklisk tid med sömn/vakenhet och tid sedan uppvaknande."
   },
   "existingModel": "Experimental circadian-rhythm analysis under forced desynchrony.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Forced-desynchrony laboratory experiment",
+      "citations": [
+        "1"
+      ],
+      "detail": {
+        "en": "Forced-desynchrony experiments showed endogenous circadian modulation of vagal markers independently of scheduled behavior.",
+        "zh-CN": "实验发现内源昼夜节律独立于计划行为影响迷走指标。",
+        "sv": "Laboratorieexperiment visade endogen dygnsmodulering av vagala markörer oberoende av schemalagt beteende."
+      }
+    }
+  ]
 };

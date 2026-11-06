@@ -15,12 +15,12 @@ export default {
   "citations": [
     "5"
   ],
-  "evidenceStrength": "rct-meta",
+  "evidenceStrength": "rct",
   "association": {
     "targets": [
       "sleep"
     ],
-    "direction": "contextual",
+    "direction": "up",
     "note": {
       "en": "In a pragmatic randomized trial, 42% of reading respondents versus 28% of controls reported improved sleep quality.",
       "zh-CN": "阅读试验中 42% 对 28% 的受访者报告睡眠质量改善。",
@@ -49,5 +49,18 @@ export default {
     "sv": "Logga medium, tidpunkt och längd frivilligt och jämför nästa natt."
   },
   "existingModel": "Randomized reading/no-reading self-reported sleep comparison.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Single pragmatic randomized trial: self-reported sleep quality improved in 42% versus 28%; no validated HRV mapping",
+      "citations": [
+        "5"
+      ],
+      "detail": {
+        "en": "In a pragmatic randomized trial, 42% of reading respondents versus 28% of controls reported improved sleep quality.",
+        "zh-CN": "阅读试验中 42% 对 28% 的受访者报告睡眠质量改善。",
+        "sv": "42 % av läsande svarande jämfört med 28 % av kontroller rapporterade bättre sömn."
+      }
+    }
+  ]
 };

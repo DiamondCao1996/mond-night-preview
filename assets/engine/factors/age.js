@@ -48,5 +48,18 @@ export default {
     "sv": "Använd endast en illustrativ olinjär kovariat och personlig baslinje."
   },
   "existingModel": "Hierarchical regression of HRV determinants.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Population cross-sectional study: 10-second ECG",
+      "citations": [
+        "8"
+      ],
+      "detail": {
+        "en": "HRV declined with age in 149,205 people using 10-second resting ECGs; age and sex explained about one fifth of between-person variation.",
+        "zh-CN": "10 秒静息心电人群中 HRV 随年龄下降；年龄和性别解释约五分之一的人际差异。",
+        "sv": "HRV minskade med ålder i 10-sekunders vilo-EKG; ålder och kön förklarade cirka en femtedel av variationen."
+      }
+    }
+  ]
 };

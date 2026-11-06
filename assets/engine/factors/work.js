@@ -17,7 +17,7 @@ export default {
     "27",
     "33"
   ],
-  "evidenceStrength": "observational",
+  "evidenceStrength": "review",
   "association": {
     "targets": [
       "hrv",
@@ -28,6 +28,10 @@ export default {
       "en": "Job stress correlated with lower HRV and higher HR; burnout was inconclusive and 24-hour-shift findings inconsistent.",
       "zh-CN": "工作压力与较低 HRV 和较高心率相关；倦怠及长班次证据不一致。",
       "sv": "Arbetsstress korrelerade med lägre HRV och högre puls; utmattning och långa skift gav osäkra fynd."
+    },
+    "byTarget": {
+      "hrv": "down",
+      "rhr": "up"
     }
   },
   "modelRole": "logged-exposure",
@@ -52,5 +56,40 @@ export default {
     "sv": "Kräv belastnings- och pausloggar; pröva framtida råd randomiserat."
   },
   "existingModel": "Reviews and cross-context stress-prediction/domain-adaptation experiments.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Systematic review of job stress: lower HRV and higher HR",
+      "citations": [
+        "26"
+      ],
+      "detail": {
+        "en": "Job stress correlated with lower HRV and higher HR; burnout was inconclusive and 24-hour-shift findings inconsistent.",
+        "zh-CN": "工作压力与较低 HRV 和较高心率相关；倦怠及长班次证据不一致。",
+        "sv": "Arbetsstress korrelerade med lägre HRV och högre puls; utmattning och långa skift gav osäkra fynd."
+      }
+    },
+    {
+      "design": "Systematic review and meta-analysis of 24-hour shifts: inconsistent findings",
+      "citations": [
+        "27"
+      ],
+      "detail": {
+        "en": "Job stress correlated with lower HRV and higher HR; burnout was inconclusive and 24-hour-shift findings inconsistent.",
+        "zh-CN": "工作压力与较低 HRV 和较高心率相关；倦怠及长班次证据不一致。",
+        "sv": "Arbetsstress korrelerade med lägre HRV och högre puls; utmattning och långa skift gav osäkra fynd."
+      }
+    },
+    {
+      "design": "Supporting cross-context stress-prediction and domain-adaptation experiments",
+      "citations": [
+        "33"
+      ],
+      "detail": {
+        "en": "Job stress correlated with lower HRV and higher HR; burnout was inconclusive and 24-hour-shift findings inconsistent.",
+        "zh-CN": "工作压力与较低 HRV 和较高心率相关；倦怠及长班次证据不一致。",
+        "sv": "Arbetsstress korrelerade med lägre HRV och högre puls; utmattning och långa skift gav osäkra fynd."
+      }
+    }
+  ]
 };

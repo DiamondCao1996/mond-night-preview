@@ -16,7 +16,7 @@ export default {
     "14",
     "15"
   ],
-  "evidenceStrength": "observational",
+  "evidenceStrength": "meta-obs",
   "association": {
     "targets": [
       "hrv"
@@ -54,5 +54,29 @@ export default {
     "diagnosis",
     "years-of-life",
     "life-expectancy-prediction"
+  ],
+  "evidenceDesigns": [
+    {
+      "design": "Prognostic meta-analysis with individual-participant subanalyses",
+      "citations": [
+        "14"
+      ],
+      "detail": {
+        "en": "Lower HRV correlated with mortality in pooled studies; measured but not genetically predicted HRV was associated with mortality in UK Biobank.",
+        "zh-CN": "较低 HRV 与死亡率相关；英国生物样本库中实测而非遗传预测 HRV 与死亡率相关。",
+        "sv": "Lägre HRV hade samband med mortalitet; uppmätt men inte genetiskt förutsagt HRV var associerat i UK Biobank."
+      }
+    },
+    {
+      "design": "UK Biobank observational and genetic association analyses",
+      "citations": [
+        "15"
+      ],
+      "detail": {
+        "en": "Lower HRV correlated with mortality in pooled studies; measured but not genetically predicted HRV was associated with mortality in UK Biobank.",
+        "zh-CN": "较低 HRV 与死亡率相关；英国生物样本库中实测而非遗传预测 HRV 与死亡率相关。",
+        "sv": "Lägre HRV hade samband med mortalitet; uppmätt men inte genetiskt förutsagt HRV var associerat i UK Biobank."
+      }
+    }
   ]
 };

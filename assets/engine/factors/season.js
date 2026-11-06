@@ -27,6 +27,10 @@ export default {
       "en": "Seasonal HRV differences were reported with conflicting direction statements; a large wearable cohort showed about 2 bpm seasonal RHR variation.",
       "zh-CN": "季节 HRV 报告方向不一致；大型队列静息心率季节差约 2 次/分。",
       "sv": "Säsongsfynd för HRV hade motstridiga riktningar; vilopuls varierade cirka 2 slag/min i en stor kohort."
+    },
+    "byTarget": {
+      "hrv": "mixed",
+      "rhr": "contextual"
     }
   },
   "modelRole": "temporal-context",
@@ -55,5 +59,29 @@ export default {
     "sv": "Använd årskontext med geografi, klimat och personliga förlopp."
   },
   "existingModel": "Paired seasonal comparisons and longitudinal RHR summaries.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Paired seasonal observational HRV measurements: conflicting direction statements",
+      "citations": [
+        "2"
+      ],
+      "detail": {
+        "en": "Seasonal HRV differences were reported with conflicting direction statements; a large wearable cohort showed about 2 bpm seasonal RHR variation.",
+        "zh-CN": "季节 HRV 报告方向不一致；大型队列静息心率季节差约 2 次/分。",
+        "sv": "Säsongsfynd för HRV hade motstridiga riktningar; vilopuls varierade cirka 2 slag/min i en stor kohort."
+      }
+    },
+    {
+      "design": "Longitudinal wearable cohort: seasonal RHR cycle of approximately 2 bpm",
+      "citations": [
+        "3"
+      ],
+      "detail": {
+        "en": "Seasonal HRV differences were reported with conflicting direction statements; a large wearable cohort showed about 2 bpm seasonal RHR variation.",
+        "zh-CN": "季节 HRV 报告方向不一致；大型队列静息心率季节差约 2 次/分。",
+        "sv": "Säsongsfynd för HRV hade motstridiga riktningar; vilopuls varierade cirka 2 slag/min i en stor kohort."
+      }
+    }
+  ]
 };

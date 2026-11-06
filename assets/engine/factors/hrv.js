@@ -54,5 +54,29 @@ export default {
     "sv": "Använd en personlig baslinje med kvalitetsgranskning."
   },
   "existingModel": "Feature extraction with NeuroKit2/pyHRV; not a recommendation model.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Guideline",
+      "citations": [
+        "32"
+      ],
+      "detail": {
+        "en": "Physiology, behavior and acquisition context influence HRV; compatible acquisition and processing are essential.",
+        "zh-CN": "HRV 受生理、行为及测量条件影响，必须保证采集可比。",
+        "sv": "HRV påverkas av fysiologi, beteende och mätvillkor."
+      }
+    },
+    {
+      "design": "Review and analysis tutorial",
+      "citations": [
+        "35"
+      ],
+      "detail": {
+        "en": "Physiology, behavior and acquisition context influence HRV; compatible acquisition and processing are essential.",
+        "zh-CN": "HRV 受生理、行为及测量条件影响，必须保证采集可比。",
+        "sv": "HRV påverkas av fysiologi, beteende och mätvillkor."
+      }
+    }
+  ]
 };

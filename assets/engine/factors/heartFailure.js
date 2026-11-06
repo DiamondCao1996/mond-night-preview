@@ -17,7 +17,7 @@ export default {
     "11",
     "12"
   ],
-  "evidenceStrength": "rct-meta",
+  "evidenceStrength": "meta-obs",
   "association": {
     "targets": [
       "hrv"
@@ -54,5 +54,40 @@ export default {
     "individual-risk-score",
     "diagnosis",
     "years-of-life"
+  ],
+  "evidenceDesigns": [
+    {
+      "design": "Systematic review of six HFrEF studies",
+      "citations": [
+        "10"
+      ],
+      "detail": {
+        "en": "HRV was generally impaired in HFrEF with broad ranges; heart-failure subgroup mortality associations were nonsignificant in one meta-analysis.",
+        "zh-CN": "HFrEF 中 HRV 通常受损且范围较宽；一项荟萃分析的心衰死亡亚组关联不显著。",
+        "sv": "HRV var ofta nedsatt vid HFrEF med stora spann; mortalitetssamband i en hjärtsviktsundergrupp var inte signifikanta."
+      }
+    },
+    {
+      "design": "Meta-analysis of cohort studies: heart-failure subgroup mortality association nonsignificant",
+      "citations": [
+        "11"
+      ],
+      "detail": {
+        "en": "HRV was generally impaired in HFrEF with broad ranges; heart-failure subgroup mortality associations were nonsignificant in one meta-analysis.",
+        "zh-CN": "HFrEF 中 HRV 通常受损且范围较宽；一项荟萃分析的心衰死亡亚组关联不显著。",
+        "sv": "HRV var ofta nedsatt vid HFrEF med stora spann; mortalitetssamband i en hjärtsviktsundergrupp var inte signifikanta."
+      }
+    },
+    {
+      "design": "Supporting MAGGIC multivariable survival model across 30 studies",
+      "citations": [
+        "12"
+      ],
+      "detail": {
+        "en": "HRV was generally impaired in HFrEF with broad ranges; heart-failure subgroup mortality associations were nonsignificant in one meta-analysis.",
+        "zh-CN": "HFrEF 中 HRV 通常受损且范围较宽；一项荟萃分析的心衰死亡亚组关联不显著。",
+        "sv": "HRV var ofta nedsatt vid HFrEF med stora spann; mortalitetssamband i en hjärtsviktsundergrupp var inte signifikanta."
+      }
+    }
   ]
 };

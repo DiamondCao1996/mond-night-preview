@@ -16,7 +16,7 @@ export default {
     "6",
     "7"
   ],
-  "evidenceStrength": "rct-meta",
+  "evidenceStrength": "meta-rct",
   "association": {
     "targets": [
       "hrv"
@@ -50,5 +50,29 @@ export default {
     "sv": "Utvärdera välbefinnande och vilofysiologi separat."
   },
   "existingModel": "Random-effects RCT meta-analysis and short-term intervention synthesis.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Meta-analysis of 19 randomized trials: resting vagal HRV versus controls nonsignificant",
+      "citations": [
+        "6"
+      ],
+      "detail": {
+        "en": "Meta-analysis of 19 RCTs: resting vagally mediated HRV versus controls was nonsignificant, with high heterogeneity.",
+        "zh-CN": "19 项 RCT 的荟萃分析：与对照组相比，静息迷走神经介导的 HRV 差异不显著，异质性较高。",
+        "sv": "Metaanalys av 19 RCT: ingen signifikant skillnad i vilande vagalt medierad HRV mot kontroller; hög heterogenitet."
+      }
+    },
+    {
+      "design": "Systematic review of seven studies: heterogeneous short-term RMSSD increases",
+      "citations": [
+        "7"
+      ],
+      "detail": {
+        "en": "Systematic review of seven studies: heterogeneous, limited short-term RMSSD increases.",
+        "zh-CN": "7 项研究的系统综述：短期 RMSSD 增加的证据有限且异质。",
+        "sv": "Systematisk översikt av sju studier: heterogena och begränsade kortsiktiga RMSSD-ökningar."
+      }
+    }
+  ]
 };

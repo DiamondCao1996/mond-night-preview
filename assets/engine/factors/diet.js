@@ -18,7 +18,7 @@ export default {
     "18",
     "19"
   ],
-  "evidenceStrength": "observational",
+  "evidenceStrength": "meta-rct",
   "association": {
     "targets": [
       "hrv"
@@ -52,5 +52,51 @@ export default {
     "sv": "Kräv kost- och måltidsloggar för personliga samband."
   },
   "existingModel": "Twin mixed-effects models, randomized dietary contrasts and meta-analysis.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Observational twin study",
+      "citations": [
+        "16"
+      ],
+      "detail": {
+        "en": "Mediterranean-diet adherence correlated with higher HRV in twins; fish-oil trials increased HF but not SDNN or successive-difference measures significantly.",
+        "zh-CN": "地中海饮食依从性与较高 HRV 相关；鱼油提高 HF，但 SDNN 和连续差异不显著。",
+        "sv": "Medelhavskost korrelerade med högre HRV; fiskolja ökade HF, men SDNN och successiva differenser inte signifikant."
+      }
+    },
+    {
+      "design": "Meta-analysis of 15 randomized trials: HF increased (SMD 0.30); SDNN and successive-difference measures nonsignificant",
+      "citations": [
+        "17"
+      ],
+      "detail": {
+        "en": "Mediterranean-diet adherence correlated with higher HRV in twins; fish-oil trials increased HF but not SDNN or successive-difference measures significantly.",
+        "zh-CN": "地中海饮食依从性与较高 HRV 相关；鱼油提高 HF，但 SDNN 和连续差异不显著。",
+        "sv": "Medelhavskost korrelerade med högre HRV; fiskolja ökade HF, men SDNN och successiva differenser inte signifikant."
+      }
+    },
+    {
+      "design": "Supporting meal-timing study: autonomic and sleep outcomes",
+      "citations": [
+        "18"
+      ],
+      "detail": {
+        "en": "Mediterranean-diet adherence correlated with higher HRV in twins; fish-oil trials increased HF but not SDNN or successive-difference measures significantly.",
+        "zh-CN": "地中海饮食依从性与较高 HRV 相关；鱼油提高 HF，但 SDNN 和连续差异不显著。",
+        "sv": "Medelhavskost korrelerade med högre HRV; fiskolja ökade HF, men SDNN och successiva differenser inte signifikant."
+      }
+    },
+    {
+      "design": "Secondary analyses of a randomized trial: daytime eating during simulated night work",
+      "citations": [
+        "19"
+      ],
+      "detail": {
+        "en": "Mediterranean-diet adherence correlated with higher HRV in twins; fish-oil trials increased HF but not SDNN or successive-difference measures significantly.",
+        "zh-CN": "地中海饮食依从性与较高 HRV 相关；鱼油提高 HF，但 SDNN 和连续差异不显著。",
+        "sv": "Medelhavskost korrelerade med högre HRV; fiskolja ökade HF, men SDNN och successiva differenser inte signifikant."
+      }
+    }
+  ]
 };

@@ -53,5 +53,18 @@ export default {
     "sv": "Beskriv gemensamma HRV- och pulsförlopp med osäkerhet."
   },
   "existingModel": "Within-person longitudinal descriptive baselines.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Longitudinal wearable cohort",
+      "citations": [
+        "3"
+      ],
+      "detail": {
+        "en": "A wearable cohort of 92,457 adults showed about 2 bpm seasonal RHR variation, highest in early January and lowest in late July.",
+        "zh-CN": "大型穿戴队列的静息心率季节变化约为 2 次/分，一月初最高，七月底最低。",
+        "sv": "En stor kohort visade cirka 2 slag/min säsongsvariation, högst tidigt i januari och lägst sent i juli."
+      }
+    }
+  ]
 };

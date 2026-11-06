@@ -20,11 +20,11 @@ export default {
     "targets": [
       "hrv"
     ],
-    "direction": "contextual",
+    "direction": "up",
     "note": {
       "en": "CARDIA examined education and income alongside RR variability; higher education correlated with LF variability after demographic adjustment.",
-      "zh-CN": "CARDIA 观察到教育、收入与 RR 变异性的关联。",
-      "sv": "CARDIA undersökte utbildning, inkomst och RR-variabilitet."
+      "zh-CN": "CARDIA 横断面分析：人口学调整后，较高教育程度与较高 LF 变异性相关；并非 RMSSD 结果。",
+      "sv": "Tvärsnittsanalys i CARDIA: högre utbildning var kopplad till större LF-variabilitet efter demografisk justering; detta avser inte RMSSD."
     }
   },
   "modelRole": "optional-covariate",
@@ -34,8 +34,8 @@ export default {
   ],
   "evidence": {
     "en": "CARDIA examined education and income alongside RR variability; higher education correlated with LF variability after demographic adjustment.",
-    "zh-CN": "CARDIA 观察到教育、收入与 RR 变异性的关联。",
-    "sv": "CARDIA undersökte utbildning, inkomst och RR-variabilitet."
+    "zh-CN": "CARDIA 横断面分析：人口学调整后，较高教育程度与较高 LF 变异性相关；并非 RMSSD 结果。",
+    "sv": "Tvärsnittsanalys i CARDIA: högre utbildning var kopplad till större LF-variabilitet efter demografisk justering; detta avser inte RMSSD."
   },
   "limits": {
     "en": "Socioeconomic associations do not establish a causal education effect.",
@@ -48,5 +48,18 @@ export default {
     "sv": "Valfri kontext; fråga separat om förklaringsnivå."
   },
   "existingModel": "Covariate-adjusted linear regression.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Cross-sectional CARDIA: higher education associated with greater LF variability",
+      "citations": [
+        "4"
+      ],
+      "detail": {
+        "en": "CARDIA examined education and income alongside RR variability; higher education correlated with LF variability after demographic adjustment.",
+        "zh-CN": "CARDIA 横断面分析：人口学调整后，较高教育程度与较高 LF 变异性相关；并非 RMSSD 结果。",
+        "sv": "Tvärsnittsanalys i CARDIA: högre utbildning var kopplad till större LF-variabilitet efter demografisk justering; detta avser inte RMSSD."
+      }
+    }
+  ]
 };

@@ -17,7 +17,7 @@ export default {
     "25",
     "34"
   ],
-  "evidenceStrength": "rct-meta",
+  "evidenceStrength": "meta-obs",
   "association": {
     "targets": [
       "hrv"
@@ -51,5 +51,40 @@ export default {
     "sv": "Logga träning för fördröjda observationssamband."
   },
   "existingModel": "HRV-guided training rules; adjacent FitRec LSTM workout-response model.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Controlled training trial",
+      "citations": [
+        "24"
+      ],
+      "detail": {
+        "en": "HRV-guided training involved fewer hard sessions and improved vagal HRV (SMD 0.50); pooled fitness advantages were small and nonsignificant.",
+        "zh-CN": "HRV 指导训练减少高强度次数；迷走 HRV 改善，体能优势小且不显著。",
+        "sv": "HRV-styrd träning gav färre hårda pass och bättre vagal HRV; konditionsfördelar var små och inte signifikanta."
+      }
+    },
+    {
+      "design": "Systematic review and meta-analysis of HRV-guided training (not described as RCTs): vagal HRV SMD 0.50",
+      "citations": [
+        "25"
+      ],
+      "detail": {
+        "en": "HRV-guided training involved fewer hard sessions and improved vagal HRV (SMD 0.50); pooled fitness advantages were small and nonsignificant.",
+        "zh-CN": "HRV 指导训练减少高强度次数；迷走 HRV 改善，体能优势小且不显著。",
+        "sv": "HRV-styrd träning gav färre hårda pass och bättre vagal HRV; konditionsfördelar var små och inte signifikanta."
+      }
+    },
+    {
+      "design": "Adjacent FitRec LSTM workout heart-rate response model",
+      "citations": [
+        "34"
+      ],
+      "detail": {
+        "en": "HRV-guided training involved fewer hard sessions and improved vagal HRV (SMD 0.50); pooled fitness advantages were small and nonsignificant.",
+        "zh-CN": "HRV 指导训练减少高强度次数；迷走 HRV 改善，体能优势小且不显著。",
+        "sv": "HRV-styrd träning gav färre hårda pass och bättre vagal HRV; konditionsfördelar var små och inte signifikanta."
+      }
+    }
+  ]
 };

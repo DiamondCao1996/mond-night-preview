@@ -15,7 +15,7 @@ export default {
   "citations": [
     "13"
   ],
-  "evidenceStrength": "rct-meta",
+  "evidenceStrength": "review",
   "association": {
     "targets": [
       "hrv"
@@ -52,5 +52,18 @@ export default {
     "individual-risk-score",
     "diagnosis",
     "years-of-life"
+  ],
+  "evidenceDesigns": [
+    {
+      "design": "Umbrella review of meta-analyses: mostly disorder/control comparisons; no convincing evidence",
+      "citations": [
+        "13"
+      ],
+      "detail": {
+        "en": "An umbrella review found disorder- and metric-dependent differences; only a minority of comparisons reached suggestive evidence, none convincing or highly suggestive.",
+        "zh-CN": "不同疾病和指标结果不同；少数比较达到提示性证据，无令人信服或高度提示性证据。",
+        "sv": "Skillnader varierade mellan diagnoser och mått; få jämförelser nådde antydande evidens, ingen övertygande eller starkt antydande."
+      }
+    }
   ]
 };

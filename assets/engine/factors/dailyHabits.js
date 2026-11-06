@@ -16,7 +16,7 @@ export default {
     "20",
     "22"
   ],
-  "evidenceStrength": "rct-meta",
+  "evidenceStrength": "meta-obs",
   "association": {
     "targets": [
       "hrv"
@@ -50,5 +50,29 @@ export default {
     "sv": "Jämför bara uttryckligen loggade exponeringar."
   },
   "existingModel": "Within-person exposure comparisons and intervention meta-analysis.",
-  "forbiddenOutputs": []
+  "forbiddenOutputs": [],
+  "evidenceDesigns": [
+    {
+      "design": "Within-person observational analysis: alcohol impaired early-night recovery",
+      "citations": [
+        "20"
+      ],
+      "detail": {
+        "en": "Logged alcohol was associated with dose-dependent impaired early-night recovery; slow breathing increased vagally mediated HRV in a meta-analysis.",
+        "zh-CN": "饮酒与早夜恢复受损存在剂量关联；慢呼吸可提高迷走相关 HRV。",
+        "sv": "Alkohol korrelerade dosberoende med sämre tidig nattlig återhämtning; långsam andning ökade vagal HRV."
+      }
+    },
+    {
+      "design": "Systematic review and meta-analysis of slow breathing (not described as RCTs): increased vagal HRV",
+      "citations": [
+        "22"
+      ],
+      "detail": {
+        "en": "Logged alcohol was associated with dose-dependent impaired early-night recovery; slow breathing increased vagally mediated HRV in a meta-analysis.",
+        "zh-CN": "饮酒与早夜恢复受损存在剂量关联；慢呼吸可提高迷走相关 HRV。",
+        "sv": "Alkohol korrelerade dosberoende med sämre tidig nattlig återhämtning; långsam andning ökade vagal HRV."
+      }
+    }
+  ]
 };

@@ -54,3 +54,54 @@ test('profile covariates are small priors; education and health never change for
  assert.notEqual(runCAS([],{profile:{heightCm:190}}).forecast.rhrBpm.mean,runCAS([]).forecast.rhrBpm.mean);
  assert.deepEqual(runCAS(nights,{profile:{education:'doctorate',health:{knownConditions:'anything'}}}),runCAS(nights));
 });
+
+import {EVIDENCE_STRENGTH_LABELS,literatureCell} from '../assets/engine/factors/index.js';
+test('report audit pins every factor badge, target direction and cited design',()=>{
+ const audit = {
+  hrv:['guideline','Guide','contextual',null,null,['32','35']],
+  rhr:['observational','Obs',null,'contextual',null,['3']],
+  sleep:['meta-obs','Meta (obs)','down',null,null,['21','23']],
+  activity:['meta-rct','Meta (RCT)','up',null,null,['36','31']],
+  age:['observational','Obs','down',null,null,['8']],
+  height:['adjacent','Adj',null,'down',null,['9']],
+  education:['observational','Obs','up',null,null,['4']],
+  heartFailure:['meta-obs','Meta (obs)','down',null,null,['10','11','12']],
+  mentalHealth:['review','Review','mixed',null,null,['13']],
+  lifeExpectancy:['meta-obs','Meta (obs)','contextual',null,null,['14','15']],
+  diet:['meta-rct','Meta (RCT)','mixed',null,null,['16','17','18','19']],
+  dailyHabits:['meta-obs','Meta (obs)','mixed',null,null,['20','22']],
+  sport:['meta-obs','Meta (obs)','up',null,null,['24','25','34']],
+  work:['review','Review','down','up',null,['26','27','33']],
+  reading:['rct','RCT',null,null,'up',['5']],
+  meditation:['meta-rct','Meta (RCT)','mixed',null,null,['6','7']],
+  timeOfDay:['experimental','Exp','contextual',null,null,['1']],
+  season:['observational','Obs','mixed','contextual',null,['2','3']]
+ };
+ assert.deepEqual(FACTORS.map(f=>f.id),Object.keys(audit));
+ assert.equal(Object.keys(EVIDENCE_STRENGTH_LABELS).length,8);
+ for(const [id,[strength,badge,...rest]] of Object.entries(audit)){
+  const f=getFactor(id),directions=rest.slice(0,3),citations=rest[3];
+  assert.equal(f.evidenceStrength,strength,id);
+  assert.equal(EVIDENCE_STRENGTH_LABELS[strength],badge,id);
+  assert.ok(f.evidenceDesigns.length>=1,id);
+  const recorded=f.evidenceDesigns.flatMap(d=>d.citations);
+  for(const citation of new Set([...citations,...f.citations]))assert.ok(recorded.includes(citation),`${id}: missing design for [${citation}]`);
+  for(const d of f.evidenceDesigns){assert.ok(d.design);assert.ok(d.citations.length);for(const lang of ['en','zh-CN','sv'])assert.ok(d.detail[lang]);}
+  ['hrv','rhr','sleep'].forEach((target,i)=>{
+   const cell=literatureCell(f,target);
+   if(directions[i]===null){assert.deepEqual(cell,{mapped:false},`${id}/${target}`);return;}
+   assert.equal(cell.mapped,true);assert.equal(cell.direction,directions[i],`${id}/${target}`);
+   assert.equal(cell.evidenceStrength,strength);assert.equal(cell.badge,badge);
+   for(const lang of ['en','zh-CN','sv']){
+    const title=literatureCell(f,target,lang).title;
+    assert.ok(title.includes(badge));assert.ok(title.includes(directions[i]));
+    for(const d of f.evidenceDesigns){assert.ok(title.includes(d.design));assert.ok(title.includes(d.detail[lang]));for(const c of d.citations)assert.ok(title.includes(`[${c}]`));}
+   }
+  });
+ }
+ assert.equal(getFactor('sleep').association.direction,'down');
+ assert.equal(getFactor('meditation').association.direction,'mixed');
+ assert.equal(getFactor('diet').association.direction,'mixed');
+ assert.ok(FACTORS.every(f=>f.evidenceStrength!=='rct-meta'));
+ assert.match(literatureCell(getFactor('education'),'hrv').title,/LF variability/);
+});
