@@ -22,7 +22,7 @@ export function classifyWeek({week,emotions=[],firstAid=[],pmr=[],logs=[],sessio
   const path=Array.isArray(e.path)?e.path:[],leaf=path.at(-1),core=path[0],node=findEmotion(leaf?.id||leaf),root=findEmotion(core?.id||core),id=leaf?.id||leaf?.label||leaf?.en||leaf?.zh||(typeof leaf==='string'?leaf:null);
   if(id){const key=String(id),old=counts.get(key);counts.set(key,{type:'emotion',id:key,node:node||leaf,color:root?.color||core?.color,count:(old?.count||0)+1});}
   const cid=root?.id||core?.id||core;if(cid)cores[cid]=(cores[cid]||0)+1;
-  add('emotion',e.note,{kind:'trigger'});
+  auto.emotion.push({type:'mood',id:e.id,path,color:root?.color||core?.color,intensity:e.intensity,date:e.date,utc:e.utc??e.saved_at,note:e.note});
   if(['joy','surprise','fear','anger','disgust','sadness','low'].includes(cid))auto.energy.push({type:'emotion',node:node||leaf,color:root?.color||core?.color,kind:['joy','surprise'].includes(cid)?'nourish':'drain'});
  }
  auto.emotion.unshift(...[...counts.values()].sort((a,b)=>b.count-a.count));
@@ -72,9 +72,4 @@ export function saveReviewLine(week,column,value){
  data[week]={...bucket,[column]:[...items,column==='energy'?{text:line,kind:value?.kind==='drain'?'drain':'nourish'}:{text:line}]};
  if(typeof localStorage==='undefined')memory=data;else localStorage.setItem('mond-inner-review',JSON.stringify(data));
  if(typeof window!=='undefined')window.dispatchEvent(new Event('mond-data-change'));
-}
-
-// Only explicit, valid choices override the current week's data.
-export function journalPane({stored,weekHasData}={}) {
- return stored==='timeline'||stored==='review'?stored:weekHasData?'review':'timeline';
 }
