@@ -2,7 +2,8 @@
 export const SENSOR_FREE_VIEWS = Object.freeze(['review', 'relax', 'feel', 'safe-space', 'forest', 'box-breathing']);
 
 export function viewForHash(hash, doc = globalThis.document) {
- const id = String(hash || '').replace(/^#/, '');
+ const raw = String(hash || '').replace(/^#/, '');
+ const id = raw === 'journal-view' ? 'journal' : raw;
  return SENSOR_FREE_VIEWS.includes(id) || doc?.getElementById(`${id}-view`) ? id : 'home';
 }
 

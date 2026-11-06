@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {isoWeekKey,classifyWeek,saveReviewLine,loadInnerReview,suggestedSteps} from '../assets/engine/innerReview.js';
-import {clearAllFactorData} from '../assets/engine/store.js';
+import {journalPane,isoWeekKey,classifyWeek,saveReviewLine,loadInnerReview,suggestedSteps} from '../assets/engine/innerReview.js';
+import {addEmotion} from '../assets/engine/emotionLog.js';
+import {loadEmotions,clearAllFactorData} from '../assets/engine/store.js';
 const week='2026-W45',date='2026-11-06';
 const emotion=(core,note='')=>({date,path:[{id:core}],note});
 test('local ISO weeks start Monday and cross years correctly',()=>{
@@ -59,5 +60,49 @@ test('review deep links reveal the sensor-free page with empty storage and no wr
   await import('../assets/review.js?test');await new Promise(resolve=>queueMicrotask(resolve));
   assert.equal(host.hidden,false);assert.equal(home.hidden,true);assert.match(host.innerHTML,/href="#feel"/);assert.match(host.innerHTML,/data-column="step"/);
   home.hidden=false;host.hidden=true;listeners.get('hashchange')();await new Promise(resolve=>queueMicrotask(resolve));assert.equal(host.hidden,false);assert.equal(home.hidden,true);
+ }finally{for(const [k,v] of Object.entries(previous))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
+});
+
+test('journal pane defaults from week data and respects explicit choices',()=>{
+ assert.equal(journalPane({weekHasData:false}),'timeline');
+ assert.equal(journalPane({weekHasData:true}),'review');
+ for(const stored of ['timeline','review'])for(const weekHasData of [true,false])assert.equal(journalPane({stored,weekHasData}),stored);
+ assert.equal(journalPane({stored:'invalid',weekHasData:true}),'review');
+});
+test('saving an emotion in the current ISO week fills the emotion band',()=>{
+ const previous=globalThis.localStorage,storage=new Map();
+ globalThis.localStorage={getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)};
+ try{
+  const currentWeek=isoWeekKey();
+  assert.equal(classifyWeek({week:currentWeek,emotions:loadEmotions()}).empty,true);
+  addEmotion({path:[{id:'joy'}],note:'A little brightness'});
+  const model=classifyWeek({week:currentWeek,emotions:loadEmotions()});
+  assert.equal(model.empty,false);assert.ok(model.auto.emotion.some(x=>x.id==='joy'));assert.ok(model.auto.emotion.some(x=>x.text==='A little brightness'));
+ }finally{if(previous===undefined)delete globalThis.localStorage;else globalThis.localStorage=previous;}
+});
+test('embedded review updates live, toggles the whole timeline, and remembers choices',async()=>{
+ const names=['document','window','location','localStorage'],previous=Object.fromEntries(names.map(k=>[k,globalThis[k]]));
+ const listeners=new Map(),elements=new Map(),storage=new Map();
+ const node=()=>({hidden:true,value:'en',textContent:'',focus(){},addEventListener(){},querySelector:()=>node(),querySelectorAll:()=>[]});
+ const get=id=>{if(!elements.has(id))elements.set(id,node());return elements.get(id);};
+ const timeline=get('journal-timeline'),review=get('journal-review'),toggle=get('journal-pane-toggle');
+ const buttons=['timeline','review'].map(pane=>({...node(),dataset:{pane}}));
+ toggle.querySelectorAll=()=>buttons;toggle.querySelector=()=>buttons[0];
+ globalThis.document={getElementById:get,documentElement:{lang:'en'},querySelectorAll:()=>[get('home-view'),get('journal-view'),get('review-view')]};
+ globalThis.window={addEventListener:(event,fn)=>listeners.set(event,fn),dispatchEvent:event=>listeners.get(event.type)?.(event)};
+ globalThis.location={hash:'#journal'};
+ globalThis.localStorage={getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)};
+ const flush=()=>new Promise(resolve=>queueMicrotask(resolve));
+ try{
+  await import('../assets/review.js?journal-test');await flush();
+  assert.equal(timeline.hidden,false);assert.equal(review.hidden,true);assert.equal(storage.size,0);
+  addEmotion({path:[{id:'joy'}],note:'Freshly saved'});await flush();
+  assert.equal(timeline.hidden,true);assert.equal(review.hidden,false);assert.match(review.innerHTML,/Freshly saved/);
+  buttons[0].onclick();assert.equal(timeline.hidden,false);assert.equal(review.hidden,true);assert.equal(storage.get('mond-journal-pane'),'timeline');
+  buttons[1].onclick();assert.equal(timeline.hidden,true);assert.equal(review.hidden,false);assert.equal(storage.get('mond-journal-pane'),'review');
+  saveReviewLine(isoWeekKey(),'belief','My new words');await flush();assert.match(review.innerHTML,/My new words/);
+  assert.match(review.innerHTML,/id="journal-review-emotion-title"/);
+  storage.set('mond-journal-pane','timeline');listeners.get('storage')({});await flush();assert.equal(review.hidden,true);assert.equal(timeline.hidden,false);
+  globalThis.location.hash='#journal-view';listeners.get('hashchange')({});await flush();assert.equal(timeline.hidden,false);
  }finally{for(const [k,v] of Object.entries(previous))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
 });

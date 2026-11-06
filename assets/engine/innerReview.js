@@ -73,3 +73,8 @@ export function saveReviewLine(week,column,value){
  if(typeof localStorage==='undefined')memory=data;else localStorage.setItem('mond-inner-review',JSON.stringify(data));
  if(typeof window!=='undefined')window.dispatchEvent(new Event('mond-data-change'));
 }
+
+// Only explicit, valid choices override the current week's data.
+export function journalPane({stored,weekHasData}={}) {
+ return stored==='timeline'||stored==='review'?stored:weekHasData?'review':'timeline';
+}

@@ -17,8 +17,8 @@ function render(){
  const lang=document.getElementById('language')?.value||document.documentElement.lang,t=copy[lang]||copy.en;
  const label=n=>n?.[lang==='zh-CN'?'zh':lang==='sv'?'sv':'en']||n?.en||'';
  for(const id of ['feel-open-home','feel-open-journal']){const link=document.getElementById(id);if(link)link.querySelector('span').textContent=t.entry;}
- if(!['#journal','#feel'].includes(location.hash))return;
- const host=document.getElementById(location.hash==='#feel'?'feel-view':'journal-view');if(!host)return;
+ if(!['#journal','#journal-view','#feel'].includes(location.hash))return;
+ const host=document.getElementById(location.hash==='#feel'?'feel-view':'journal-timeline');if(!host)return;
  if(location.hash==='#feel'){revealView(host);document.getElementById('section-kicker').textContent=t.kicker;document.getElementById('page-title').textContent=t.pageTitle;}
  let root=document.getElementById('emotion-compass');if(!root){root=document.createElement('section');root.id='emotion-compass';}if(root.parentElement!==host)host.prepend(root);
  const entries=loadEmotions(),current=trail.at(-1),nodes=current?.children.length?current.children:trail.length?[]:EMOTION_WHEEL;
