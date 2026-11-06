@@ -33,7 +33,7 @@ Intervals combine state variance and fixed illustrative observation noise, widen
 
 `generateSampleNights({seed, count, endDate})` defaults to 42 nights ending 2026-10-31, fixing the date for reproducibility. It includes weekend timing/activity, a seasonal RHR component, sleep debt, delayed load, logged behaviors and missing/poor nights. Dates are UTC ISO calendar dates. Only overnight RMSSD from the sample PPG device is accepted; SDNN, paced-breathing windows and different devices are excluded rather than silently pooled. A future importer must implement explicit device comparability rather than reusing this sample gate.
 
-`runCAS(nights, {horizon: 1, language: 'en', adapt: true})` expects unique chronological dates and returns four metric forecasts with means, bounds and units, confidence, abstention, localized observational explanations, backtest statistics, reliability weights and personal posterior parameters. Null measurements remain null. `adapt: false` freezes personal priors for an adaptation comparison. Longer horizons project context to the target date without assuming intervening observations; this preview focuses on one night.
+`runCAS(nights, {horizon: 1, language: 'en', adapt: true, profile: {}})` expects unique chronological dates and returns four metric forecasts with means, bounds and units, confidence, abstention, localized observational explanations, backtest statistics, reliability weights and personal posterior parameters. Null measurements remain null. `adapt: false` freezes personal priors for an adaptation comparison. Longer horizons project context to the target date without assuming intervening observations; this preview focuses on one night.
 
 ## Baselines and evaluation
 
@@ -45,4 +45,84 @@ Run `node --test` or `npm test`. Tests cover deterministic sampling, missingness
 
 ## Limits
 
-Sample data only; no real-data importer, fitted population parameters, prospective evaluation or intervention validation. Context coefficients and noise are hand-set for this illustration. No age or medical history is collected. Events describe synthetic logged behaviors, not diagnoses. The model is observational, not causal; explanations do not establish that an event changed physiology. It does not measure sleep quality, stress, recovery, health or life expectancy, and is not medical advice. Stages 4–6, action ranking and clinical predictions remain out of scope.
+Sample forecasting demonstration with a vendor-neutral import preview; no vendor adapter, fitted population parameters, prospective evaluation or intervention validation. Context coefficients and noise are hand-set for this illustration. Age and height are optional illustrative prior covariates; consented health context stays separate from numerical forecasts. Events describe synthetic logged behaviors, not diagnoses. The model is observational, not causal; explanations do not establish that an event changed physiology. It does not measure sleep quality, stress, recovery, health or life expectancy, and is not medical advice. Stages 4–6, action ranking and clinical predictions remain out of scope.
+
+
+## Factor registry
+
+`assets/engine/factors/index.js` exports `FACTORS` in stable report order, `getFactor`, `evaluateFactor` and `assertSafeFactorOutput`. Each factor has its own module with EN/简体中文/Svenska evidence, limits, proposed use, inputs, citations, permitted output type, literature direction and source analysis method (`existingModel`). Evidence labels describe the cited designs, not a formal certainty assessment. Mixed designs use the primary label in the table; synthesis text retains conflicting and nonsignificant findings. Reading is a single pragmatic RCT, displayed under the RCT family label.
+
+| # | Factor | Role | modelRole | outputType | Citations |
+|---|---|---|---|---|---|
+| 1 | hrv | observation | observation | quality-gated-observation | [32] [35] |
+| 2 | rhr | observation | observation | joint-trajectory | [3] |
+| 3 | sleep | observation | observation | shortfall-forecast | [23] [21] |
+| 4 | activity | observation | observation | load-context | [31] [36] |
+| 5 | age | profile | nonlinear-covariate | descriptive-age-comparison | [8] |
+| 6 | height | profile | candidate-covariate | candidate-covariate | [9] |
+| 7 | education | profile | optional-covariate | optional-context | [4] |
+| 8 | heartFailure | health | separate-pathway | evidence-only | [10] [11] [12] |
+| 9 | mentalHealth | health | separate-pathway | evidence-only | [13] |
+| 10 | lifeExpectancy | health | separate-pathway | evidence-only | [14] [15] |
+| 11 | diet | behavior | logged-exposure | personal-association | [16] [17] [18] [19] |
+| 12 | dailyHabits | behavior | logged-exposure | personal-association | [20] [22] |
+| 13 | sport | behavior | logged-exposure | personal-association | [24] [25] [34] |
+| 14 | work | behavior | logged-exposure | personal-association | [26] [27] [33] |
+| 15 | reading | behavior | logged-exposure | personal-association | [5] |
+| 16 | meditation | behavior | logged-exposure | personal-association | [6] [7] |
+| 17 | timeOfDay | temporal | temporal-context | temporal-illustration | [1] |
+| 18 | season | temporal | temporal-context | temporal-illustration | [2] [3] |
+
+Citation numbers refer to the supplied *HRV Evidence and World Model Development Report*, 31 October 2026, references 1–39. Detail sheets retain these report citation IDs. Sleep and activity remain observation agents, not recommendation policies.
+
+## Data schema and import/export
+
+The import adapter previews Stage 1 harmonization; it is **not a real wearable importer for any specific vendor**. Version 1 JSON:
+
+```json
+{
+  "version": 1,
+  "measurements": [
+    {"utc":"2026-10-01T22:00:00Z","timezone":"Europe/Stockholm",
+     "device":"sample-ppg","metric":"RMSSD","unit":"ms","value":55,
+     "window":"overnight","quality":"good","durationSeconds":28800}
+  ],
+  "events": [{"type":"reading","utc":"2026-10-01T20:00:00Z",
+              "durationMinutes":20,"note":"paper book"}],
+  "profile": {"age":40,"heightCm":170}
+}
+```
+
+Measurements require utc (ISO timestamp with explicit UTC offset), IANA timezone, device, metric, unit, finite numeric value, window and quality. `durationSeconds` is optional and positive. Supported pairs: `RMSSD/ms`, `RHR/bpm`, `sleep/min`, `activity/steps`. Quality is `good`, `poor` or `missing`. Missing-quality values are never assimilated; the exporter uses a zero placeholder for an entirely missing sample night and the parser restores a null metric. This placeholder is not an observation. Raw imported measurement records, including duration, timezone and device, are retained. No firmware provenance is fabricated.
+
+Measurement CSV header:
+
+```csv
+utc,timezone,device,metric,unit,value,window,quality,durationSeconds
+```
+
+CSV accepts quoted fields, escaped quotes and embedded newlines. A standalone events CSV has `type,utc,durationMinutes,note` (optional timezone); a combined CSV uses measurement columns plus `type,durationMinutes,note`, with measurement fields blank on event rows. Standalone events with no overnight measurements produce a validation error rather than replacing nights. `parseImport(text,{format:'json'|'csv'|'auto'})` returns `{ok,nights,events,errors,warnings}`. Optional JSON profile is reserved context and is not silently stored, especially not health information; enter profile information through the consent-aware form.
+
+Measurements group by **local calendar date**, not host timezone or UTC day. Metrics on a date must share a device; duplicate metrics and incompatible devices on one date are errors rather than silently averaged. SDNN is rejected explicitly as incompatible with RMSSD. Non-overnight windows, including paced breathing, are excluded with warnings. Invalid fields, timestamps, timezones, units and numeric values produce errors. Events use an explicit event timezone or the unambiguous measurement timezone; ambiguous event timezones are reported and not merged. Devices retain their original names: only `sample-ppg` passes the current CAS/association comparability gate. This intentionally prevents arbitrary real-device data from becoming a falsely validated PPG model input.
+
+`exportTimeline(nights,{format:'json'|'csv'})` exports measurement provenance and explicit events. JSON includes version 1; combined CSV preserves event rows. Sample exports remain labeled by filename and sample device. Imported-quality records remain inspectable even when excluded from forecasting. The imported badge describes the source, not clinical validation.
+
+Local storage keys are `mond-factors-profile`, `mond-factors-logs` and `mond-factors-nights`. The store works in Node with an in-memory fallback. Browser changes dispatch `mond-data-change`. Logs are `{date:'YYYY-MM-DD',types:string[]}` and are merged by exact date without inventing exposures or mutating the source nights. Restoring samples clears imported nights only; deleting all factor data clears all three keys after confirmation. No MOND cloud is involved. Browser storage is not additional encryption.
+
+## Personal associations and gating
+
+`personalAssociation(nights,{exposure,metric:'hrvRmssdMs',lagNights:1,minN:5})` computes the difference of means on comparable good-quality overnight RMSSD sample-PPG nights, grouped by an **explicitly logged event on the prior calendar date**. Lag 0 is supported; missing dates never shift the lag. Outcomes must be finite. At least five observations are required in each group; otherwise counts and `not-enough-data` are returned. `associationsFromLogs` evaluates the nine supported log types. The synthetic generator stamps common exposures (alcohol/workout) and rare meditation, with small deterministic delayed patterns; these are **SAMPLE data, not research participants**.
+
+The reported standard error is `sqrt(sWith²/nWith + sWithout²/nWithout)` using sample variances, with approximate normal 95% difference bounds `delta ± 1.96 se`. These are exploratory, unadjusted, within-person observational comparisons, not causal effects or calibrated inference: temporal autocorrelation, multiple comparisons, selection, overlapping exposures and confounding are not controlled. No such log is not confirmed abstention. A real analysis needs prospective logging and a suitable repeated-measures model. The literature matrix encodes published direction and design class with color, opacity and explicit glyphs; it never substitutes personal deltas for literature effects. A source-labeled detail chart shows personal comparisons separately.
+
+The age curve is **illustrative, from 10-second ECG population data, not transferable to overnight PPG**. It is not a percentile or diagnosis. The optional latest overnight RMSSD point is a visual comparison across incompatible contexts, not normalization. CAS applies only a mild nonlinear age offset to the demonstration HRV prior (ages 18–90), not a fitted age reference. Height contributes a small candidate inverse RHR prior offset using adjacent HR evidence. Neither is calibrated. Education never changes forecasts, and explanation detail is a separate preference. The hand-set logged-event coefficients are modest delayed demonstration associations, never action rankings. All health context remains outside forecast computations.
+
+## Safety boundaries
+
+Heart failure, mental health and life expectancy are three **separate clinical/research pathways**, each restricted to `evidence-only`. `evaluateFactor` calls the recursive `assertSafeFactorOutput` guard; clinical payloads cannot contain riskScore, diagnosis, yearsOfLife, lifeExpectancyYears, survivalProbability, hazard or clinicalRisk (including nested variants). They expose evidence, limits and citations without a personal risk chart. Forbidden output metadata additionally records individual-risk-score, diagnosis and years-of-life; life expectancy also forbids life-expectancy-prediction. Mortality association is never relabeled remaining lifespan. MAGGIC is not a consumer HRV score. HRV is not a psychiatric classifier.
+
+Known conditions, medication and an independently assessed wellbeing score require explicit on-device storage consent; each supports prefer-not-to-say. Revoking consent removes health data when the profile is saved. These fields are context labels only and do not enter numerical forecasts. MOND never computes wellbeing from HRV. It never infers meals, alcohol, work stress, medication or any unlogged behavior from deviations. No mixing RMSSD with SDNN, paced breathing with overnight/resting, or incompatible devices. Copy is observational; sample data stays labeled; this is not medical advice.
+
+## Roadmap scope
+
+This milestone adds Stage 0 factor/output contracts and schema, a Stage 1 **import preview**, and Stage 2/3 **sample-data** context, personal adaptation and exploratory associations. It does not establish external validity by importing an export. Stage 4 action-effect identification, Stage 5 action ranking and Stage 6 clinical extensions remain out of scope. Heart failure, independently assessed mental-health outcomes and survival analysis each require their own Stage 6 protocol, datasets, clinical variables, validation and intended claims. No risk scores, diagnoses, years-of-life predictions or lifestyle action ranking are implemented.

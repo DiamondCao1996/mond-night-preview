@@ -1,3 +1,5 @@
+import {good} from './engine/baselines.js';
+import {loadNights,loadLogs,loadProfile,mergeLogsIntoNights} from './engine/store.js';
 import {generateSampleNights, runCAS} from './engine/index.js';
 // Illustrative fixtures only. No sensor data or overnight recording is used.
 const copy = {
@@ -43,7 +45,7 @@ const animalIds = ['fox', 'otter', 'lion', 'tiger', 'bunny', 'capybara', 'cat', 
 const yesterday = new Date();
 yesterday.setDate(yesterday.getDate() - 1);
 const endDate = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
-const nights = generateSampleNights({endDate});
+
 const contributorLabels = {
   en: {sleepAgent:'Sleep', activityLoadAgent:'Activity', circadianSeasonAgent:'Timing', behaviorEventAgent:'Logged event'},
   'zh-CN': {sleepAgent:'睡眠', activityLoadAgent:'活动', circadianSeasonAgent:'时间', behaviorEventAgent:'已记录事件'},
@@ -56,11 +58,20 @@ const extra = {
 };
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 function render() {
+  const imported=loadNights();
+  const nights=mergeLogsIntoNights(imported || generateSampleNights({endDate}),loadLogs());
   const lang = document.getElementById('language')?.value || document.documentElement.lang;
-  const t = copy[lang] || copy.en;
+  const t = {...(copy[lang] || copy.en)};
+  if(imported){t.sample=lang==='zh-CN'?'已导入数据':lang==='sv'?'Importerade data':'Imported data';t.intro=t.sample;t.baseline=t.sample;}
   document.querySelector('nav [data-view="night"] span').textContent = t.nav;
-  const x = extra[lang] || extra.en;
-  const result = runCAS(nights, {language: lang});
+  const x = {...(extra[lang] || extra.en)};
+  if(imported){x.test=lang==='zh-CN'?'导入数据回测 · 平均绝对误差':lang==='sv'?'Test på importerade data · genomsnittligt absolut fel':'Imported-data backtest · mean absolute error';x.disclaimer=lang==='zh-CN'?'导入数据的研究预览预测，未经临床验证，不是医疗建议。仅可比的 sample-ppg 整夜 RMSSD 进入预测。':lang==='sv'?'Forskningsprognos på importerade data, inte kliniskt validerad eller medicinska råd. Endast jämförbar nattlig RMSSD från sample-ppg används.':'Research-preview forecasts on imported data, not clinically validated or medical advice. Only comparable sample-ppg overnight RMSSD informs forecasts.';}
+  const result = runCAS(nights, {language: lang,profile:loadProfile()});
+  if(imported){
+    const replaceSource=text=>text.replaceAll('sample forecast','preview forecast').replaceAll('this sample','this preview').replaceAll('sample pattern','preview pattern').replaceAll('示例预测','预览预测').replaceAll('示例模式','预览模式').replaceAll('为示例','为预览').replaceAll('Exempelprognosen','Förhandsprognosen').replaceAll('exemplet','förhandsvisningen').replaceAll('exempelmönster','illustrativt mönster');
+    result.judgment.trend=replaceSource(result.judgment.trend);result.judgment.contributors.forEach(c=>c.text=replaceSource(c.text));
+    for(const key of ['above','below','close','trend'])t[key]=t[key].replaceAll('sample nights','imported nights').replaceAll('示例夜晚','导入夜晚').replaceAll('exempelnätter','importerade nätter');
+  }
   const f = result.forecast;
   const fmt = n => Math.round(n).toLocaleString(lang in copy ? lang : 'en');
   const duration = n => {
@@ -81,7 +92,7 @@ function render() {
   try { animal = JSON.parse(localStorage.getItem('mond-profile'))?.animal || animal; } catch {}
   animal = document.documentElement.dataset.animal || animal;
   const name = t.animals[Math.max(0, animalIds.indexOf(animal) < 0 ? 4 : animalIds.indexOf(animal))];
-  const last = nights.findLast(n => n.quality === 'good' && ['hrvRmssdMs', 'rhrBpm', 'sleepMinutes', 'steps'].some(k => Number.isFinite(n[k])));
+  const last = nights.findLast(n => good(n) && ['hrvRmssdMs', 'rhrBpm', 'sleepMinutes', 'steps'].some(k => Number.isFinite(n[k])));
   const number = fmt;
   const date = d => new Date(`${d}T12:00:00Z`).toLocaleDateString(lang in copy ? lang : 'en', {month:'short', day:'numeric'});
   const metrics = [
@@ -91,10 +102,11 @@ function render() {
     ['steps', t.activity, t.steps, 500]
   ];
   const cards = metrics.map(([key, label, unit, threshold]) => {
-    const history = nights.filter(n => n.quality === 'good' && Number.isFinite(n[key])).slice(-7);
+    const history = nights.filter(n => good(n) && Number.isFinite(n[key])).slice(-7);
     const latest = history.at(-1);
     const value = latest ? (key === 'sleepMinutes' ? duration(latest[key]) : number(latest[key])) : '—';
-    const detail = !latest ? '—' : key === 'hrvRmssdMs' ? 'RMSSD' : key === 'sleepMinutes' ? `${latest.bedtime}–${latest.wake} · ${latest.efficiencyPct ?? '—'}% ${t.efficiency}` : key === 'steps' ? `${latest.activeMinutes ?? '—'} ${t.active}` : t.last;
+    const detail = !latest ? '—' : key === 'hrvRmssdMs' ? 'RMSSD' : key === 'sleepMinutes' ? `${latest.bedtime??'—'}–${latest.wake??'—'} · ${latest.efficiencyPct ?? '—'}% ${t.efficiency}` : key === 'steps' ? `${latest.activeMinutes ?? '—'} ${t.active}` : t.last;
+    if(history.length<7) return `<article class="card night-metric"><h2 class="night-label">${escape(label)}</h2><p class="night-value">${escape(value)} <small>${escape(unit)}</small></p><p class="night-detail">${escape(detail)}</p><p class="night-delta">${escape(lang==='zh-CN'?'可比夜晚不足七晚':lang==='sv'?'Färre än sju jämförbara nätter':'Fewer than seven comparable nights')}</p></article>`;
     const values = history.map(n => n[key]);
     const previous = values.slice(0, 6).sort((a,b) => a-b);
     const delta = values[6] - (previous[2] + previous[3]) / 2;
@@ -110,12 +122,12 @@ function render() {
     return `<article class="card night-metric"><h2 class="night-label">${escape(label)}</h2><p class="night-value${long}">${escape(value)} <small>${escape(unit)}</small></p><p class="night-detail">${escape(detail)}</p><p class="night-delta">${escape(phrase)}</p><svg class="night-trend" viewBox="0 0 160 52" role="img" aria-label="${escape(description + '. ' + forecastLabel)}"><polygon points="8,48 ${line} 152,48" fill="currentColor" opacity=".08"/><polyline points="${line}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polygon points="122,${y(values[6])} 150,${y(f[key].lo)} 150,${y(f[key].hi)}" fill="currentColor" opacity=".14"/><path d="M122 ${y(values[6])} L150 ${y(f[key].mean)}" fill="none" stroke="currentColor" stroke-dasharray="3 3"/><path d="M150 ${y(f[key].lo)} V${y(f[key].hi)}" stroke="currentColor"/><circle cx="150" cy="${y(f[key].mean)}" r="3" fill="currentColor"/>${points.map(([x,y],i) => `<circle cx="${x}" cy="${y}" r="${i===6?3.5:2}" fill="currentColor"/>`).join('')}</svg><div class="night-range"><span>${escape(date(history[0].date))}</span><span>${escape(x.tonight)}</span></div></article>`;
   }).join('');
   const forecastCards = metrics.map(([key,label]) => `<article class="card forecast-card ${key === 'sleepMinutes' || key === 'steps' ? 'forecast-secondary' : 'forecast-primary'}"><h3>${escape(label)}${key === 'hrvRmssdMs' ? ' · RMSSD' : ''}</h3><p>${interval(key)}</p><small>${x.band}</small></article>`).join('');
-  const models = Object.entries(result.backtest.models).map(([key,m],i) => `<tr><th scope="row">${x.models[i]}</th><td>${m.hrvMae.toFixed(2)}</td><td>${m.rhrMae.toFixed(2)}</td></tr>`).join('');
+  const models = Object.entries(result.backtest.models).map(([key,m],i) => `<tr><th scope="row">${x.models[i]}</th><td>${(m.hrvMae?.toFixed(2)??'—')}</td><td>${(m.rhrMae?.toFixed(2)??'—')}</td></tr>`).join('');
   const labels = contributorLabels[lang] || contributorLabels.en;
   const contributors = result.judgment.contributors.filter(c => c.direction !== 'neutral' && labels[c.agent]);
   const quality = result.judgment.contributors.find(c => c.agent === 'observationQualityAgent');
-  const additions = `<section class="night-forecast"><h2>${x.tonight}</h2><p class="night-confidence" aria-label="${confidence}">${confidenceDots} ${confidence}</p><div class="night-grid">${forecastCards}</div></section><section class="night-judgment"><h2>${x.reading}</h2><article class="card"><p>${escape(result.judgment.trend)}</p>${result.abstain ? `<p class="night-abstain"><strong>${escape(x.none)}</strong></p>` : ''}${contributors.length ? `<div class="night-contributors">${contributors.map(c => `<div class="night-contributor"><span class="tiny-label">${escape(labels[c.agent])}</span><p>${escape(c.text)}</p></div>`).join('')}</div>` : ''}${quality ? `<p class="night-method">${escape(quality.text)}</p>` : ''}</article></section><details class="card night-comparison"><summary>${x.compare}</summary><p>${x.test} · n=${result.backtest.n}</p><table><thead><tr><th scope="col">${x.compare}</th><th scope="col">HRV (${t.ms})</th><th scope="col">RHR (${t.bpm})</th></tr></thead><tbody>${models}</tbody></table><p>${x.coverage} · HRV ${Math.round(result.backtest.models.cas.hrvCoverage*100)}% · RHR ${Math.round(result.backtest.models.cas.rhrCoverage*100)}%</p></details>`;
-  document.getElementById('night-view').innerHTML = `<div class="night-intro"><span class="pill demo">${escape(t.sample)}</span><p>${escape(t.intro)}</p></div><p class="eyebrow">${escape(t.last)} · ${escape(date(last.date))}</p><div class="night-grid">${cards}</div><p class="night-baseline">${escape(x.baseline)}</p>${additions}<article class="card night-message"><span class="tiny-label">${escape(t.from.replace('{name}', name))}</span><h2>${escape(x.message)}</h2><p>${escape(t.note)}</p></article><p class="science-note">${escape(x.disclaimer)}</p>`;
+  const additions = `<section class="night-forecast"><h2>${x.tonight}</h2><p class="night-confidence" aria-label="${confidence}">${confidenceDots} ${confidence}</p><div class="night-grid">${forecastCards}</div></section><section class="night-judgment"><h2>${x.reading}</h2><article class="card"><p>${escape(result.judgment.trend)}</p>${result.abstain ? `<p class="night-abstain"><strong>${escape(x.none)}</strong></p>` : ''}${contributors.length ? `<div class="night-contributors">${contributors.map(c => `<div class="night-contributor"><span class="tiny-label">${escape(labels[c.agent])}</span><p>${escape(c.text)}</p></div>`).join('')}</div>` : ''}${quality ? `<p class="night-method">${escape(quality.text)}</p>` : ''}</article></section><details class="card night-comparison"><summary>${x.compare}</summary><p>${x.test} · n=${result.backtest.n}</p><table><thead><tr><th scope="col">${x.compare}</th><th scope="col">HRV (${t.ms})</th><th scope="col">RHR (${t.bpm})</th></tr></thead><tbody>${models}</tbody></table><p>${x.coverage} · HRV ${result.backtest.models.cas.hrvCoverage===null?'—':Math.round(result.backtest.models.cas.hrvCoverage*100)+'%'} · RHR ${result.backtest.models.cas.rhrCoverage===null?'—':Math.round(result.backtest.models.cas.rhrCoverage*100)+'%'}</p></details>`;
+  document.getElementById('night-view').innerHTML = `<div class="night-intro"><span class="pill demo">${escape(t.sample)}</span><p>${escape(t.intro)}</p></div><p class="eyebrow">${escape(t.last)} · ${escape(last?date(last.date):'—')}</p><div class="night-grid">${cards}</div><p class="night-baseline">${escape(x.baseline)}</p>${additions}<article class="card night-message"><span class="tiny-label">${escape(t.from.replace('{name}', name))}</span><h2>${escape(x.message)}</h2><p>${escape(t.note)}</p></article><p class="science-note">${escape(x.disclaimer)}</p>`;
 }
 // Run after the existing router/localizer, including its synchronous event work.
 const refresh = () => queueMicrotask(render);
@@ -123,4 +135,5 @@ window.addEventListener('hashchange', refresh);
 window.addEventListener('mond-language-change', refresh);
 document.getElementById('language')?.addEventListener('change', refresh);
 window.addEventListener('storage', refresh);
+window.addEventListener('mond-data-change', refresh);
 refresh();

@@ -1,3 +1,4 @@
+import {eventDelta} from './events.js';
 import {keys,priors,mean,good,values,baselines} from './baselines.js';
 const names=['observationQualityAgent','circadianSeasonAgent','sleepAgent','activityLoadAgent','behaviorEventAgent','personalDynamicsAgent'];
 const clip=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -11,19 +12,26 @@ function context(history,date,state) {
   const day=new Date(date), weekend=[0,6].includes(day.getUTCDay());
   const season=2*Math.cos(2*Math.PI*(day-new Date(`${day.getUTCFullYear()}-01-01T00:00Z`))/31557600000);
   const load=previous?Math.max(0,((previous.steps??8000)-8000)/3000):0;
-  const event=(n)=>n?.events?.reduce((s,e)=>s+(['lateActivity','alcoholLogged'].includes(e.type)?1:0),0)||0;
-  const delayed=event(last)+.35*event(history.at(-2));
+  const a=eventDelta(last?.events), b=eventDelta(history.at(-2)?.events);
+  const delayed=a.map((v,i)=>v+.35*b[i]);
   const timing=previous?Math.max(0,(clock(previous.wake)-clock(previous.bedtime)+24)%24-9):0;
   return [
     {agent:names[0],delta:[0,0,0,0],sigma:good(last||{})?1:2,reason:'quality'},
     {agent:names[1],delta:[-.2*timing,season,weekend?15:0,weekend?2400:0],sigma:1,reason:'timing'},
     {agent:names[2],delta:[-.032*debt,.012*debt,0,0],sigma:1,reason:'sleep'},
     {agent:names[3],delta:[-1.3*load,.5*load,0,0],sigma:1,reason:'activity'},
-    {agent:names[4],delta:[-1.3*delayed,.5*delayed,0,0],sigma:1,reason:'events'},
+    {agent:names[4],delta:delayed,sigma:1,reason:'events'},
     {agent:names[5],delta:[0,0,0,0],sigma:1,reason:'personal'}
   ];
 }
-function create(){return {state:priors.map((mean,i)=>({mean,variance:noise[i]**2*30})),errors:Object.fromEntries(names.map(n=>[n,5])),weights:Object.fromEntries(names.map(n=>[n,1/6]))};}
+function create(profile={}){
+  const adjusted=[...priors];
+  // Uncalibrated 10s-ECG-inspired nonlinear age covariate, NOT a PPG reference.
+  if(Number.isFinite(profile.age)&&profile.age>=18&&profile.age<=90) adjusted[0]+=3*(Math.exp(-.013*(profile.age-40))-1);
+  // Small candidate inverse height/RHR term: adjacent evidence, not validated normalization.
+  if(Number.isFinite(profile.heightCm)&&profile.heightCm>=100&&profile.heightCm<=230) adjusted[1]-=.015*(profile.heightCm-170);
+  // Education and consented health context never numerically enter this model.
+  return {state:adjusted.map((mean,i)=>({mean,variance:noise[i]**2*30})),errors:Object.fromEntries(names.map(n=>[n,5])),weights:Object.fromEntries(names.map(n=>[n,1/6]))};}
 function predict(env,history,date,horizon=1){
   const contributions=context(history,date,env.state);
   // Adaptive reliability moderates contextual terms; normalized weights also exposed.
@@ -54,11 +62,11 @@ function assimilate(env,night,pred,adapt){
     s.mean+=gain*(night[k]-pred.effects[i]-s.mean);s.variance=(1-gain)*variance;
   });
 }
-export function runCAS(nights,{horizon=1,language='en',adapt=true}={}) {
+export function runCAS(nights,{horizon=1,language='en',adapt=true,profile={}}={}) {
   if(!Number.isInteger(horizon)||horizon<1)throw new RangeError('horizon must be a positive integer');
   const ns=nights.map(n=>({...n,date:new Date(n.date).toISOString().slice(0,10),events:n.events||[]}));
   for(let i=1;i<ns.length;i++)if(ns[i].date<=ns[i-1].date)throw new RangeError('Nights must be chronological with unique dates');
-  const env=create(), burnIn=14, scores=Object.fromEntries(['cas','lastValue','personalAverage','ar1','noHrv'].map(n=>[n,{hrv:[],rhr:[],hc:[],rc:[]}])) ;
+  const env=create(profile), burnIn=14, scores=Object.fromEntries(['cas','lastValue','personalAverage','ar1','noHrv'].map(n=>[n,{hrv:[],rhr:[],hc:[],rc:[]}])) ;
   ns.forEach((night,t)=>{
     const past=ns.slice(0,t), pred=predict(env,past,night.date);
     if(t>=burnIn && good(night)){
