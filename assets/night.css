@@ -1,0 +1,22 @@
+#night-view{min-width:0;overflow-x:hidden;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+#night-view .night-intro{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+#night-view .night-intro p{flex:1 1 200px;margin:0;color:var(--muted);font-size:12px;line-height:1.65}
+#night-view .night-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#night-view .night-metric{padding:14px 12px 12px;min-width:0;overflow:hidden}
+#night-view .night-label{font-size:12px;line-height:1.4;margin:0;font-weight:600;color:var(--ink)}
+#night-view .night-value{font-size:28px;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1.15;margin:8px 0 2px;color:var(--ink);overflow-wrap:anywhere}
+#night-view .night-value.long{font-size:22px;letter-spacing:-.6px}
+#night-view .night-value small{font-size:11px;letter-spacing:0;color:var(--muted);font-weight:500}
+#night-view .night-detail{font-size:11px;color:var(--muted);line-height:1.5;margin:0}
+#night-view .night-delta{font-size:11px;color:var(--green);line-height:1.45;margin:8px 0 0}
+#night-view .night-trend{display:block;width:100%;height:52px;color:var(--green);overflow:visible;margin-top:4px}
+#night-view .night-range{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);gap:6px}
+#night-view .night-baseline{font-size:11px;color:var(--muted);line-height:1.65;margin:14px 2px 18px}
+#night-view .night-message{background:color-mix(in srgb,var(--sage) 32%,white);margin-bottom:18px;border-color:color-mix(in srgb,var(--green) 16%,var(--line))}
+#night-view .night-message .tiny-label{color:var(--green)}
+#night-view .night-message h2{font-family:var(--serif);font-size:24px;line-height:1.3;font-weight:400;margin:10px 0 8px;color:var(--ink)}
+#night-view .night-message p{font-size:12px;line-height:1.65;margin:0;color:var(--muted)}
+#night-view .science-note{line-height:1.75;margin-bottom:8px}
+body:has(#night-view:not([hidden])) #source-badge{display:none}
+@media(min-width:1100px){#night-view .night-grid{grid-template-columns:repeat(4,minmax(0,1fr))}#night-view .night-metric{padding:22px 18px}#night-view .night-value{font-size:30px}#night-view .night-value.long{font-size:24px}}
+@media(max-width:740px){nav{grid-template-columns:repeat(5,1fr)}nav button{padding:6px 1px;gap:4px!important}nav button span:last-child{font-size:8px;letter-spacing:-.1px;line-height:1.15}#night-view .night-message{padding:22px 20px}#night-view .night-message h2{font-size:22px}}
