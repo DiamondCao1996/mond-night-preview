@@ -1,3 +1,4 @@
+import {offerFirstAid} from './firstAid.js';
 import {EMOTION_WHEEL,findEmotion} from './engine/emotionWheel.js';
 import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations,localDate,buildSessionLink,latestSavedMoment} from './engine/emotionLog.js';
 import {loadEmotions,loadNights,loadLogs,mergeLogsIntoNights} from './engine/store.js';
@@ -21,7 +22,7 @@ function render(){
  root.querySelectorAll('[data-emotion]').forEach(el=>{const choose=()=>{trail.push(findEmotion(el.dataset.emotion));message='';render();root.querySelector('#emotion-back')?.focus();};el.onclick=choose;if(el.tagName.toLowerCase()==='g')el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}};});
  root.querySelector('#emotion-back')?.addEventListener('click',()=>{trail.pop();render();});
  root.querySelector('#emotion-note').oninput=e=>note=e.target.value;root.querySelector('#emotion-intensity').onchange=e=>intensity=e.target.value;
- root.querySelector('form').onsubmit=e=>{e.preventDefault();if(!trail.length)return;try{addEmotion({path:trail,intensity:intensity?Number(intensity):undefined,note});trail=[];note='';intensity='';message='saved';render();}catch(error){root.querySelector('[role="status"]').textContent=error.message;}};
+ root.querySelector('form').onsubmit=e=>{e.preventDefault();if(!trail.length)return;try{const saved=addEmotion({path:trail,intensity:intensity?Number(intensity):undefined,note});trail=[];note='';intensity='';message='saved';render();offerFirstAid(saved.at(-1));}catch(error){root.querySelector('[role="status"]').textContent=error.message;}};
  root.querySelectorAll('[data-delete-emotion]').forEach(btn=>btn.onclick=()=>{if(confirm(t.confirm)){deleteEmotion(btn.dataset.deleteEmotion);render();}});
 }
 const refresh=()=>queueMicrotask(render);
@@ -57,8 +58,9 @@ function openMomentCompass(moment) {
   // Skip (including Escape/close) never writes an emotion; the moment is already saved.
   dialog.querySelector('[data-skip]').onclick=()=>dialog.close();
   dialog.querySelector('form').onsubmit=e=>{e.preventDefault();if(!path.length)return;try{
-   addEmotion({path,intensity:momentIntensity?Number(momentIntensity):undefined,note:momentNote,session:buildSessionLink(moment)});
+   const saved=addEmotion({path,intensity:momentIntensity?Number(momentIntensity):undefined,note:momentNote,session:buildSessionLink(moment)});
    dialog.close();
+   offerFirstAid(saved.at(-1));
   }catch(error){dialog.querySelector('[role="alert"]').textContent=error.message;}};
  };
  dialog.addEventListener('close',()=>dialog.remove(),{once:true});
