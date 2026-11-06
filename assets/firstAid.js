@@ -1,3 +1,4 @@
+import {revealView} from './engine/routes.js';
 import {mountChips} from './suggestionChips.js';
 import {loadEmotions} from './engine/store.js';
 import {openForest,strategyLinks} from './forestAid.js';
@@ -31,7 +32,7 @@ function render(focus=false){
  const t=text();document.querySelectorAll('[data-safe-space-entry]').forEach(el=>el.textContent=t.entry);
  if(location.hash!=='#safe-space')return;
  const host=document.getElementById('safe-space-view');if(!host)return;
- host.hidden=false;document.getElementById('section-kicker').textContent=label(strategy.title);document.getElementById('page-title').textContent=t.intro;
+ revealView(host);document.getElementById('section-kicker').textContent=label(strategy.title);document.getElementById('page-title').textContent=t.intro;
  const heading=step===0?t.before:step===4?t.after:step===5?t.done:step===1?(language()==='zh-CN'?'这颜色好像有一点靠近你此刻的感受':'This color seems close to how you feel right now'):label(strategy.questions[step-1]);
  let content='';
  if(step===0||step===4){const key=step===0?'before':'after';content=`<p>${esc(label(strategy.steps[step]))}</p><div class="aid-drops" role="group" aria-label="${esc(heading)}">${[1,2,3,4,5].map(n=>`<button class="aid-drop ${draft[key]>=n?'filled':''}" data-drop="${n}" aria-label="${esc(heading)} ${n}/5" aria-pressed="${draft[key]===n}">${drop(n)}</button>`).join('')}</div>`;}

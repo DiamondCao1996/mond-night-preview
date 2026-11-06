@@ -1,3 +1,4 @@
+import {revealView} from './engine/routes.js';
 import {FIRST_AID_DEFAULTS} from './engine/firstAid.js';
 import {mountChips,collapseOptional} from './suggestionChips.js';
 import {offerMomentCare} from './pmr.js';
@@ -18,7 +19,7 @@ function render(){
  for(const id of ['feel-open-home','feel-open-journal']){const link=document.getElementById(id);if(link)link.querySelector('span').textContent=t.entry;}
  if(!['#journal','#feel'].includes(location.hash))return;
  const host=document.getElementById(location.hash==='#feel'?'feel-view':'journal-view');if(!host)return;
- if(location.hash==='#feel'){document.getElementById('section-kicker').textContent=t.kicker;document.getElementById('page-title').textContent=t.pageTitle;}
+ if(location.hash==='#feel'){revealView(host);document.getElementById('section-kicker').textContent=t.kicker;document.getElementById('page-title').textContent=t.pageTitle;}
  let root=document.getElementById('emotion-compass');if(!root){root=document.createElement('section');root.id='emotion-compass';}if(root.parentElement!==host)host.prepend(root);
  const entries=loadEmotions(),current=trail.at(-1),nodes=current?.children.length?current.children:trail.length?[]:EMOTION_WHEEL;
  const imported=loadNights(),hasConnection=document.getElementById('device-dot')?.classList.contains('on')||/sample session/i.test(document.getElementById('device-name')?.textContent||''),showAssociations=!!imported||hasConnection,end=new Date();end.setDate(end.getDate()-1);const nights=mergeLogsIntoNights(imported||(showAssociations?generateSampleNights({endDate:localDate(end)}):[]),loadLogs());
