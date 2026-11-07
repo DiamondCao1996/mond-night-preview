@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {SENSOR_FREE_VIEWS, viewForHash} from '../assets/engine/routes.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {SENSOR_FREE_VIEWS, viewForHash} from '../assets/engine/routes.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
 
 test('self-care routes open without a document, profile, sessions or sensor', () => {
  const previous = globalThis.localStorage;

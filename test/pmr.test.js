@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {PMR_TRIGGER,PMR_ZONES,PMR_STEPS,sensorBaseline,pmrQuality,shouldOfferPmr,savePmrCompletion,loadPmr,momentInvitation} from '../assets/engine/pmr.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
-import {clearAllFactorData} from '../assets/engine/store.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {PMR_TRIGGER,PMR_ZONES,PMR_STEPS,sensorBaseline,pmrQuality,shouldOfferPmr,savePmrCompletion,loadPmr,momentInvitation} from '../assets/engine/pmr.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
+import {clearAllFactorData} from '../assets/engine/store.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
 const sample=(rmssd=40,mode='sensor')=>({mode,version:'mond-causal-1.1',window:180,stats:{rmssd_ms:rmssd,sdnn_ms:35,mean_hr_bpm:65}});
 const profile={schema:1,baselines:{sensor:[sample()],demo:[sample(100,'demo')]}};
 const session=()=>({mode:'sensor',status:'connected',stale:false,warming:false,processing_version:'mond-causal-1.1',elapsed:180,metrics:{rmssd:20},series:Array.from({length:181},(_,i)=>({time_s:i,event_index:i,corrected_ms:i%2?800:820,action:'unchanged'}))});
@@ -46,7 +46,7 @@ test('combined invitation renders exactly one primary action and quiet alternati
  const host=get('relax-view');host.querySelector=selector=>{if(!nodes.has(selector))nodes.set(selector,node());return nodes.get(selector);};host.querySelectorAll=()=>[];
  globalThis.document={addEventListener(){},querySelectorAll:()=>[],documentElement:{lang:'en'},getElementById:get,createElement:()=>dialog={nodes:new Map(),setAttribute(){},querySelector(selector){if(!this.nodes.has(selector))this.nodes.set(selector,node());return this.nodes.get(selector);},addEventListener(){},showModal(){},close(){},remove(){},innerHTML:''},body:{append(){}}};
  globalThis.window={addEventListener(){},removeEventListener(){},dispatchEvent(){}};let hash='#home';globalThis.location={get hash(){return hash;},set hash(value){hash=value.startsWith('#')?value:'#'+value;}};const storage=new Map([['mond-profile',JSON.stringify(profile)]]);globalThis.localStorage={getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value)};
- try{const {offerMomentCare}=await import('../assets/pmr.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca');offerMomentCare({session:session()},{path:[{id:'anger'}],intensity:3});assert.equal((dialog.innerHTML.match(/class="primary"/g)||[]).length,1);assert.match(dialog.innerHTML,/class="text-button" data-aid/);assert.match(dialog.innerHTML,/class="text-button" data-no/);
+ try{const {offerMomentCare}=await import('../assets/pmr.js?v=135e68fba5df30ade5cd1920aef10d008822562c');offerMomentCare({session:session()},{path:[{id:'anger'}],intensity:3});assert.equal((dialog.innerHTML.match(/class="primary"/g)||[]).length,1);assert.match(dialog.innerHTML,/class="text-button" data-aid/);assert.match(dialog.innerHTML,/class="text-button" data-no/);
  dialog.querySelector('[data-pmr]').onclick();assert.match(host.innerHTML,/Begin practice/);
  host.querySelector('[data-next]').click();
  for(let i=0;i<10;i++){assert.match(host.innerHTML,new RegExp(PMR_ZONES[i].en));for(let phase=0;phase<3;phase++)host.querySelector('[data-next]').click();}

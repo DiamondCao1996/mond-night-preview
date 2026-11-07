@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {FACTORS,getFactor,evaluateFactor,assertSafeFactorOutput} from '../assets/engine/factors/index.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
-import {generateSampleNights,runCAS} from '../assets/engine/index.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
-import {personalAssociation,associationsFromLogs} from '../assets/engine/associations.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
-import {parseImport,exportTimeline} from '../assets/engine/importData.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
-import {saveProfile,loadProfile,saveLogs,loadLogs,saveImportedNights,loadNights,mergeLogsIntoNights,clearAllFactorData} from '../assets/engine/store.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {FACTORS,getFactor,evaluateFactor,assertSafeFactorOutput} from '../assets/engine/factors/index.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
+import {generateSampleNights,runCAS} from '../assets/engine/index.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
+import {personalAssociation,associationsFromLogs} from '../assets/engine/associations.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
+import {parseImport,exportTimeline} from '../assets/engine/importData.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
+import {saveProfile,loadProfile,saveLogs,loadLogs,saveImportedNights,loadNights,mergeLogsIntoNights,clearAllFactorData} from '../assets/engine/store.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
 const nights=generateSampleNights();
 const m={utc:'2026-10-01T22:00:00Z',timezone:'Europe/Stockholm',device:'sample-ppg',metric:'RMSSD',unit:'ms',value:55,window:'overnight',quality:'good'};
 const parse=(measurements,events=[])=>parseImport(JSON.stringify({version:1,measurements,events}));
@@ -55,7 +55,7 @@ test('profile covariates are small priors; education and health never change for
  assert.deepEqual(runCAS(nights,{profile:{education:'doctorate',health:{knownConditions:'anything'}}}),runCAS(nights));
 });
 
-import {EVIDENCE_STRENGTH_LABELS,literatureCell} from '../assets/engine/factors/index.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {EVIDENCE_STRENGTH_LABELS,literatureCell} from '../assets/engine/factors/index.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
 test('report audit pins every factor badge, target direction and cited design',()=>{
  const audit = {
   hrv:['guideline','Guide','contextual',null,null,['32','35']],

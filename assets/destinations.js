@@ -1,4 +1,4 @@
-import {revealView} from './engine/routes.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {revealView} from './engine/routes.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
 // Move the original nodes, never copy or rebuild controls with attached listeners.
 export function moveControl(node,host){if(node&&host&&node.parentNode!==host)host.append(node);}
 const words={

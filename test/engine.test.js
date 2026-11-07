@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {generateSampleNights,runCAS,baselines} from '../assets/engine/index.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {generateSampleNights,runCAS,baselines} from '../assets/engine/index.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
 const nights=generateSampleNights();
 test('seeded comparable sample with gaps',()=>{
  assert.deepEqual(nights,generateSampleNights());assert.equal(nights.length,42);

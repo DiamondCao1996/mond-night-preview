@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {SUGGESTIONS,suggestionsFor} from '../assets/engine/suggestions.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {SUGGESTIONS,suggestionsFor} from '../assets/engine/suggestions.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
 const fields=['note','sessionNote','occurrence','requirement','ethos','source','tend','butterfly','texture'];
 test('all reflection fields have bilingual, varied generic phrases',()=>{for(const field of fields)for(const lang of ['zh','en'])assert.ok(new Set(SUGGESTIONS[field].generic[lang]).size>=4,`${field} ${lang}`);});
 test('anger occurrence and its descendants inherit the right words',()=>{for(const path of [[{id:'anger'}],[{id:'anger'},{id:'hostile'}]]){const words=suggestionsFor({field:'occurrence',path,lang:'zh-CN'});assert.ok(words.includes('被人打断或忽视'));assert.ok(words.includes('事情没按计划进行'));assert.equal(words[0],'被人打断或忽视');}});
@@ -9,7 +9,7 @@ test('lookup fills short buckets from static generic data',()=>{SUGGESTIONS.note
 test('suggestion data excludes harmful phrases',()=>{for(const buckets of Object.values(SUGGESTIONS))for(const pair of Object.values(buckets))for(const words of Object.values(pair))for(const word of words)assert.doesNotMatch(word,/自杀|自残|kill myself|suicide|self-harm/i);});
 
 test('one primary suggestion is the best-fit first phrase',async()=>{
- const {suggestionPrimary}=await import('../assets/engine/suggestions.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca');
+ const {suggestionPrimary}=await import('../assets/engine/suggestions.js?v=135e68fba5df30ade5cd1920aef10d008822562c');
  for(const field of fields)for(const lang of ['en','zh-CN']){
  const options={field,path:[{id:'anger'}],lang};assert.equal(suggestionPrimary(options),suggestionsFor(options)[0]);
  }
