@@ -1,6 +1,6 @@
-import {loadPmr,savePmr} from './store.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-import {localDate} from './emotionLog.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-import {invitationView} from './firstAid.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
+import {loadPmr,savePmr} from './store.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {localDate} from './emotionLog.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {invitationView} from './firstAid.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 export const PMR_TRIGGER={dropFraction:0.5,processingVersion:'mond-causal-1.1',windowSeconds:180,minSuccessivePairs:30,maxAlteredRatio:0.1,edgeToleranceSeconds:5,maxGapSeconds:6};
 export const PMR_ZONES=[['forehead','额头与眉毛','Forehead and eyebrows','Panna och ögonbryn'],['jaw','下颌与嘴唇','Jaw and lips','Käke och läppar'],['shoulders','肩膀与颈部','Shoulders and neck','Axlar och nacke'],['chest','胸部','Chest','Bröst'],['arms','上臂','Upper arms','Överarmar'],['hands','手部与前臂','Hands and forearms','Händer och underarmar'],['abdomen','腹部','Abdomen','Mage'],['thighs','大腿','Thighs','Lår'],['calves','小腿','Calves','Vader'],['feet','脚部','Feet','Fötter']].map(([id,zh,en,sv])=>({id,zh,en,sv}));
 export const PMR_STEPS=[{zh:'① 吸气收紧（紧绷肌肉 5 秒）',en:'① Breathe in and tense gently (5 seconds)',sv:'① Andas in och spänn varsamt (5 sekunder)'},{zh:'② 呼气释放（逐渐放松，并觉察放松的感觉）',en:'② Breathe out and release gradually, noticing relaxation',sv:'② Andas ut och släpp gradvis, lägg märke till avslappningen'},{zh:'③ 停顿片刻，体会变化和放松感',en:'③ Pause and notice the change and relaxation',sv:'③ Pausa och känn förändringen och avslappningen'}];

@@ -1,8 +1,8 @@
-import {deleteEmotion} from './engine/emotionLog.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-import {findEmotion} from './engine/emotionWheel.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-import {revealView} from './engine/routes.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-import {loadEmotions,loadFirstAid,loadPmr,loadLogs} from './engine/store.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-import {COLUMN_IDS,isoWeekKey,weekMonday,classifyWeek,loadInnerReview,saveReviewLine,suggestedSteps} from './engine/innerReview.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
+import {deleteEmotion} from './engine/emotionLog.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {findEmotion} from './engine/emotionWheel.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {revealView} from './engine/routes.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {loadEmotions,loadFirstAid,loadPmr,loadLogs} from './engine/store.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {COLUMN_IDS,isoWeekKey,weekMonday,classifyWeek,loadInnerReview,saveReviewLine,suggestedSteps} from './engine/innerReview.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 const copy={
  zh:{entry:'内在盘点',title:'内在盘点 Inner Review',add:'+ 补一句',save:'保存',cancel:'取消',swap:'换一句',prev:'上一周',next:'下一周',empty:'给这一周留一点空间。',feel:'记录情绪',privacy:'这是对已记录内容的个人回顾，不是诊断或医疗建议。仅保存在此浏览器。',nourish:'滋养我的事',drain:'消耗我的事',error:'暂时无法保存，请重试。',headings:['情绪','行为','身体','信念转念','能量来源','微小的第一步'],prompts:[['本周最常出现的情绪','触发场景','情绪背后的隐藏需求'],['重复出现的行为或习惯','是什么推动我这样做','想继续或停止的行为'],['最常出现的身体感受','这些感受在什么情况下出现','身体想告诉我什么','我可以为身体做些什么'],['识别本周反复出现的限制性信念','哪些事实不支持这个信念','我更愿意相信的新信念'],['滋养我的事','消耗我的事'],['本周的第一步','或下周想尝试的一小步']]},
  en:{entry:'Inner review',title:'Inner Review',add:'+ Add a line',save:'Save',cancel:'Cancel',swap:'Another phrase',prev:'Previous week',next:'Next week',empty:'A little room to look back on your week.',feel:'Log a feeling',privacy:'A personal recap of what you already logged, not a diagnosis or medical advice. Saved only in this browser.',nourish:'What nourished me',drain:'What drained me',error:'Could not save. Please try again.',headings:['Emotions','Behavior','Body','Reframing beliefs','Energy sources','A tiny first step'],prompts:[['Most frequent emotions this week','Triggering situations','Hidden needs behind emotions'],['Recurring behaviors or habits','What drives me to do this','Behaviors to continue or stop'],['Most frequent body sensations','When these sensations appear','What my body wants to tell me','What I can do for my body'],['Recurring limiting beliefs this week','Facts that do not support this belief','A new belief I would rather hold'],['What nourished me','What drained me'],['This week’s first step','Or a small step to try next week']]},

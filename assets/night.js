@@ -1,6 +1,6 @@
-import {good} from './engine/baselines.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-import {loadNights,loadLogs,loadProfile,mergeLogsIntoNights} from './engine/store.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-import {generateSampleNights, runCAS} from './engine/index.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
+import {good} from './engine/baselines.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {loadNights,loadLogs,loadProfile,mergeLogsIntoNights} from './engine/store.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {generateSampleNights, runCAS} from './engine/index.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 // Illustrative fixtures only. No sensor data or overnight recording is used.
 const copy = {
   en: {

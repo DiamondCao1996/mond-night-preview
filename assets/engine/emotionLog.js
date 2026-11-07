@@ -1,5 +1,5 @@
-import {EMOTION_WHEEL} from './emotionWheel.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-import {loadEmotions,saveEmotions} from './store.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
+import {EMOTION_WHEEL} from './emotionWheel.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {loadEmotions,saveEmotions} from './store.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 export const localDate=(date=new Date())=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
 export function addEmotion(entry={}) {
   let nodes=EMOTION_WHEEL;
