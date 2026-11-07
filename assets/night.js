@@ -85,7 +85,7 @@ function render() {
   const confidence = `${x.sure}: ${x.levels[result.confidence]}`;
   const confidenceDots = `<span class="confidence-dots" aria-hidden="true">${'●'.repeat({low:1,medium:2,high:3}[result.confidence])}${'○'.repeat(3-{low:1,medium:2,high:3}[result.confidence])}</span>`;
   document.getElementById('home-night-teaser').innerHTML = `<article class="card night-teaser"><span class="tiny-label">☾ ${escape(x.tonight)} · ${escape(t.sample)}</span><h2>${escape(t.hrv)} · RMSSD</h2><p class="teaser-forecast">${interval('hrvRmssdMs')}</p><p class="night-confidence">${confidenceDots} ${escape(confidence)}</p><p class="teaser-note">${escape(result.judgment.trend)}</p><a class="text-button" href="#night">${escape(x.open)}</a></article>`;
-  if (location.hash !== '#night') return;
+  if (!['#night','#night-view','#nights','#rhythm','#rhythm-view','#live'].includes(location.hash)) return;
   document.getElementById('section-kicker').textContent = t.kicker;
   document.getElementById('page-title').textContent = t.title;
   let animal = 'bunny';

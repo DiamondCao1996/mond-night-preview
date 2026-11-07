@@ -71,7 +71,7 @@ function render(){
   document.getElementById('section-kicker').textContent='INNER REVIEW';document.getElementById('page-title').textContent=t.title;
   renderReview(host);return;
  }
- if(!['#journal','#journal-view'].includes(location.hash))return;
+ if(!['#journal','#journal-view','#dashboard','#vision','#actions'].includes(location.hash))return;
  const host=document.getElementById('journal-view'),timeline=document.getElementById('journal-timeline'),review=document.getElementById('journal-review');
  if(!host||!timeline||!review)return;
  revealView(host);

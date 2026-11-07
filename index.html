@@ -5,6 +5,13 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <script>
+// An in-memory fallback keeps sensor-free tools available when browser storage is blocked.
+try { window.localStorage.getItem('mond-storage-probe'); } catch {
+ window.__MOND_STORAGE_TEMP = true;
+ const memory = new Map();
+ try { Object.defineProperty(window, 'localStorage', {value:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,String(v)),removeItem:k=>memory.delete(k)}, configurable:true}); } catch {}
+}
+
 window.__MOND_V = 'relax-open-1';
 document.addEventListener('DOMContentLoaded', async function () {
   const stamp = window.__MOND_V;
@@ -48,6 +55,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 <script type="module" src="./assets/pmr.js?v=b2dfff9"></script>
 <link rel="stylesheet" href="./assets/review.css?v=b2dfff9">
 <script type="module" src="./assets/review.js?v=b2dfff9"></script>
+<link rel="stylesheet" href="./assets/restructure.css">
+<script type="module" src="./assets/restructure.js"></script>
 </head>
 <body>
 <a href="#main" class="skip">Skip to content</a>
@@ -56,8 +65,8 @@ document.addEventListener('DOMContentLoaded', async function () {
   <nav aria-label="Main navigation">
     <button data-view="home" class="active"><span data-icon="home"></span><span>Your corner</span></button>
     <button data-view="rhythm"><span data-icon="pulse"></span><span>My rhythm</span></button>
-    <button data-view="journal"><span data-icon="book"></span><span>Little moments</span></button>
-    <button data-view="night"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/><path d="M17 3v4m-2-2h4"/></svg><span>My nights</span></button>
+    <button data-view="tools"><span data-icon="book"></span><span>Toolbox</span></button>
+    <button data-view="journal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/><path d="M17 3v4m-2-2h4"/></svg><span>My dashboard</span></button>
     <button data-view="companion"><span data-icon="bunny"></span><span>My companion</span></button>
     <button data-view="factors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span>Factors</span></button>
   </nav>
@@ -68,6 +77,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 <div class="app-shell">
   <header class="topbar"><a class="mobile-brand" href="#home" aria-label="MOND home"><img src="./assets/mond-logo-OAe0Uk5e.png" alt="MOND" width="112" height="51"></a><div class="header-intro"><p class="eyebrow" id="date"></p><span class="welcome">Welcome to your quiet corner</span></div><label class="language-control" translate="no"><span class="sr-only">Language / 语言 / Språk</span><select id="language" aria-label="Language / 语言 / Språk"><option value="en">English</option><option value="zh-CN">简体中文</option><option value="sv">Svenska</option></select></label><button id="connect-top" class="connect"><span data-icon="bluetooth"></span><span>Connect MOND</span></button></header>
   <main id="main" tabindex="-1">
+    <p id="storage-notice" role="status" hidden></p>
+    <a id="toolbox-return" class="tool-return" href="#tools" hidden>← Toolbox</a>
     <div class="view-heading"><div><p class="eyebrow" id="section-kicker">YOUR EVERYDAY COMPANION</p><h1 id="page-title">A moment, just for you.</h1></div><span id="source-badge" class="pill">Ready when you are</span></div>
     <section id="home-view" class="view">
       <div class="overview-grid">
@@ -83,17 +94,17 @@ document.addEventListener('DOMContentLoaded', async function () {
       <div class="lower-grid"><section class="card chart-card" id="chart-home"><div class="card-heading"><div><h2>A little view of your rhythm</h2><p class="small">Pulse intervals · milliseconds</p></div><span class="small">Last 5 min</span></div><div class="chart-slot" id="chart1"></div><p class="chart-caption" id="chart-note">Your chart will grow as your sensor sends data.</p></section><section class="card checkin-card"><span class="tiny-label">A MOMENT TO CHECK IN</span><h2>How is your world<br>feeling right now?</h2><p>Your words give the numbers context.</p><div class="feelings" role="group" aria-label="How you feel"><button data-feeling="Comfortable">☀<span>Comfortable</span></button><button data-feeling="A little tired">☾<span>A little tired</span></button><button data-feeling="A bit much">☁<span>A bit much</span></button></div><a id="feel-open-home" class="feel-open" href="#feel">♡ <span>Log a feeling</span></a><a id="review-open-home" class="feel-open" href="#review">Inner review</a><a id="relax-open-home" class="feel-open" href="#relax">Take a moment to relax</a><button id="checkin" class="text-button">Something else, or just a note <span aria-hidden="true">→</span></button></section></div>
       <p class="science-note">A signal is a clue, not a judgement. PPG interval variability is an estimate—not a measure of your mood, focus, or worth.</p>
     </section>
-    <section id="rhythm-view" class="view" hidden><div class="card rhythm-main"><div class="card-heading"><div><h2>Your session, at your pace</h2><p id="session-basis" class="small">No active session</p></div><div class="segmented" role="group" aria-label="Chart measurement"><button data-chart="interval" class="selected">Intervals</button><button data-chart="pulse">Pulse rate</button></div></div><div class="chart-slot tall" id="chart2"></div><div class="detail-metrics"><div><small>Recording time</small><strong id="duration">00:00</strong></div><div><small>Observed events</small><strong id="event-count">0</strong></div><div><small>Altered or removed</small><strong id="altered">0</strong></div><div><small>SDNN estimate</small><strong id="sdnn">—</strong></div></div><div class="session-actions"><button class="primary" id="save-session">Save a moment</button><button class="outline" id="stop">End session</button><button class="text-button" id="export-live">Export intervals ↓</button></div></div><details class="card explain"><summary>What am I looking at?</summary><p>These are pulse intervals received from your MOND, not an ECG waveform. RMSSD describes differences between adjacent retained observations. The current firmware repeats cached values and can omit intervals, so these are observed-event estimates.</p><p>A full quiet minute is needed before variability appears. Missing values stay as gaps. “Recent data” describes freshness, not verified skin contact. The app cannot read your feelings from these numbers.</p><p>Data is processed on your device. This first version records only while the app is in the foreground. Battery level is not supplied by this firmware.</p></details></section>
+    <section id="rhythm-view" class="view" hidden><div id="merged-nav"></div><div id="live-section"><div class="card rhythm-main"><div class="card-heading"><div><h2>Your session, at your pace</h2><p id="session-basis" class="small">No active session</p></div><div class="segmented" role="group" aria-label="Chart measurement"><button data-chart="interval" class="selected">Intervals</button><button data-chart="pulse">Pulse rate</button></div></div><div class="chart-slot tall" id="chart2"></div><div class="detail-metrics"><div><small>Recording time</small><strong id="duration">00:00</strong></div><div><small>Observed events</small><strong id="event-count">0</strong></div><div><small>Altered or removed</small><strong id="altered">0</strong></div><div><small>SDNN estimate</small><strong id="sdnn">—</strong></div></div><div class="session-actions"><button class="primary" id="save-session">Save a moment</button><button class="outline" id="stop">End session</button><button class="text-button" id="export-live">Export intervals ↓</button></div></div><details class="card explain"><summary>What am I looking at?</summary><p>These are pulse intervals received from your MOND, not an ECG waveform. RMSSD describes differences between adjacent retained observations. The current firmware repeats cached values and can omit intervals, so these are observed-event estimates.</p><p>A full quiet minute is needed before variability appears. Missing values stay as gaps. “Recent data” describes freshness, not verified skin contact. The app cannot read your feelings from these numbers.</p><p>Data is processed on your device. This first version records only while the app is in the foreground. Battery level is not supplied by this firmware.</p></details></div><section id="night-view"></section></section>
     <section id="relax-view" class="view" hidden></section>
 <section id="feel-view" class="view" hidden></section>
     <section id="forest-view" class="view" hidden></section>
     <section id="box-breathing-view" class="view" hidden></section>
     <section id="safe-space-view" class="view" hidden></section>
     <section id="review-view" class="view" hidden></section>
-    <section id="journal-view" class="view" hidden><div id="journal-timeline"><a class="feel-open" data-safe-space-entry href="#safe-space">情绪急救角 / Safe space</a><a class="feel-open" href="#forest">森林接纳所有的叶子 / Forest</a> <a class="feel-open" href="#box-breathing">4-4-4-4盒式呼吸法 / Box breathing</a><div class="journal-intro"><p>Small observations. A little more understanding.<br>Save what you noticed, without needing to explain everything.</p><a id="feel-open-journal" class="feel-open" href="#feel">♡ <span>Log a feeling</span></a><button id="journal-add" class="primary">+ Save this moment</button></div><div id="sessions" class="session-list"></div></div><div id="journal-review"></div></section>
+    <section id="journal-view" class="view" hidden><div id="dashboard-nav"></div><div id="journal-timeline"><div class="journal-intro"><p>Small observations. A little more understanding.<br>Save what you noticed, without needing to explain everything.</p><a id="feel-open-journal" class="feel-open" href="#feel">♡ <span>Log a feeling</span></a><button id="journal-add" class="primary">+ Save this moment</button></div><div id="sessions" class="session-list"></div></div><div id="journal-review"></div><div id="dashboard-boards"></div></section>
     <section id="companion-view" class="view" hidden><div class="companion-detail card"><img src="./assets/bunny-product-C3rln806.webp" alt="MOND bunny sensor"><div><span class="tiny-label">YOUR EAR-SIDE COMPANION</span><h2>Small ears.<br>A little room for you.</h2><p>Momo is here to keep you company. Connect your MOND, choose when to check in, and explore your own patterns.</p><button id="companion-connect" class="primary">Connect my MOND</button> <button id="quiet-mobile" class="outline" aria-pressed="false">Quiet display</button><p class="small">Turn on the sensor and keep it nearby. Choose your HeartRateMonitor device when the Bluetooth picker opens.</p></div></div><div class="card permission-note"><span data-icon="lock"></span><div><h2>Your moments belong to you.</h2><p>Sessions are saved only when you choose. No MOND account or cloud sync. You control export and deletion. This prototype stores data in the app’s local storage; it does not add encryption beyond your device protections. Your operating system’s backup settings may apply.</p></div></div></section>
     <section id="factors-view" class="view" hidden></section>
-    <section id="night-view" class="view" hidden></section>
+    <section id="tools-view" class="view" hidden></section>
   </main>
   <footer><a class="footer-brand" href="#home" aria-label="MOND home"><img src="./assets/mond-logo-OAe0Uk5e.png" alt="MOND" width="70" height="32"></a><span>A softer rhythm.</span><button id="about" class="text-button">About this prototype</button></footer>
 </div>
