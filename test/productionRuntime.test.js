@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 const run=promisify(execFile);
-for(const lang of ['en','zh-CN','sv'])for(const route of ['home','settings','companion','factors'])test(`production HTML module lifecycle ${lang} #${route}`,async()=>{
+for(const lang of ['en','zh-CN','sv'])for(const route of ['home','settings','companion','factors','music','context'])test(`production HTML module lifecycle ${lang} #${route}`,async()=>{
  const {stdout,stderr}=await run(process.execPath,[new URL('../test-support/production-runtime-fixture.mjs',import.meta.url).pathname,lang,route],{timeout:30000});
  assert.match(stdout,/production lifecycle passed/);assert.equal(stderr,'');
 });

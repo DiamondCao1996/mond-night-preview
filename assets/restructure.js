@@ -32,7 +32,7 @@ function render(){
  for(const [id,label] of [['tools',t.tools],['journal',t.dashboard],['rhythm',t.merged]]){const b=document.querySelector(`nav [data-view="${id}"]`);if(b){b.querySelector('span:last-child').textContent=label;b.classList.toggle('active',view===id);}}
  document.querySelectorAll('.tool-exit').forEach(a=>a.remove());
  const back=$('toolbox-return');if(back){back.hidden=!TOOLS.some(x=>x.route===raw);back.textContent=t.back;}
- if(focusedNode){focusedParent.insertBefore(focusedNode,focusedNext?.parentNode===focusedParent?focusedNext:null);focusedNode=null;}
+ if(focusedNode){focusedParent=({'music-card':$('settings-music'),'support-card':$('settings-support')})[focusedNode.id]||focusedParent;focusedParent.insertBefore(focusedNode,focusedNext?.parentNode===focusedParent?focusedNext:null);focusedNode=null;}
 
  if(view==='tools'){$('tools-view').innerHTML=`<p>${t.intro}</p><div class="tool-grid">${TOOLS.map(tool=>`<article class="tool-card"><span aria-hidden="true">${tool.icon}</span><h2>${esc(tool.titles[n])}</h2><p>${esc(tool.descriptions[n])}</p><a href="#${tool.route}">${t.open}</a></article>`).join('')}</div>`;revealView($('tools-view'));$('page-title').textContent=t.tools;$('section-kicker').textContent='MOND · '+t.tools;}
  if(view==='journal'){

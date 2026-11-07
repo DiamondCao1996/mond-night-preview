@@ -22,15 +22,17 @@ export function refineDestinations(lang,view,raw){
  if(view==='settings'||view==='companion')revealView($(`${view}-view`));
  for(const [id,label] of [['home',t[0]],['companion',t[1]],['settings',t[2]]]){const b=document.querySelector(`nav [data-view="${id}"]`);if(b){const labelNode=b.querySelector('span:last-child');labelNode.setAttribute('translate','no');labelNode.textContent=label;}}
  document.querySelectorAll('nav [data-view]').forEach(b=>{const active=b.dataset.view===view;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
- const groups=[['device',t[5]],['baseline',lang==='zh'?'个人基线':lang==='sv'?'Personlig baslinje':'Personal baseline'],['preferences',lang==='zh'?'建议与显示偏好':lang==='sv'?'Förslag & visning':'Suggestion & display preferences']];
+ const groups=[['device',t[5]],['baseline',lang==='zh'?'个人基线':lang==='sv'?'Personlig baslinje':'Personal baseline'],['music',lang==='zh'?'音乐与聆听':lang==='sv'?'Musik & lyssnande':'Music & listening'],['support',lang==='zh'?'适合此刻的支持':lang==='sv'?'Stöd för stunden':'Support for this moment'],['preferences',lang==='zh'?'建议与显示偏好':lang==='sv'?'Förslag & visning':'Suggestion & display preferences']];
  for(const [id,label]of groups){let group=$(`settings-${id}`);if(!group){group=document.createElement('section');group.id=`settings-${id}`;const heading=document.createElement('h2');group.append(heading);settings.append(group);}group.querySelector('h2').textContent=label;}
  for(const selector of ['.animal-picker','.companion-detail','.permission-note'])moveControl(document.querySelector(selector),$('settings-device'));
  moveControl(document.querySelector('.support-settings'),$('settings-preferences'));
  moveControl($('quiet-mobile'),$('settings-preferences'));
  placeHomeControl(document.querySelector('.baseline-card'),$('settings-baseline'),view==='home');
- placeHomeControl($('support-card'),$('companion-view'),view==='home');
- // Listening remains a Toolbox utility, with its original audio and handlers.
- let library=$('tool-library');if(!library){library=document.createElement('div');library.id='tool-library';library.hidden=true;$('main').append(library);}placeHomeControl($('music-card'),library,view==='home');
+ // Settings owns the original utilities; focused launches borrow them temporarily.
+ for(const [id,group,routes] of [['music-card','music',['music']],['support-card','support',['context','pause']]]){
+  const node=$(id),focused=node?.parentNode?.id==='tool-focus-view'&&routes.includes(raw);
+  if(!focused)moveControl(node,$(`settings-${group}`));
+ }
  let care=$('care-intro');if(!care){care=document.createElement('div');care.id='care-intro';$('companion-view').prepend(care);}
  care.innerHTML=`<p>${t[3]}</p><article class="card"><h2>${t[9]}</h2><div class="subnav"><a href="#feel">${t[10]}</a><a href="#tools">${t[11]}</a><a href="#home">${t[8]}</a></div></article>`;
  $('settings-intro').innerHTML=`<p>${t[4]}</p><div class="subnav"><a href="#device">${t[5]}</a><a href="#baseline">${lang==='zh'?'个人基线':lang==='sv'?'Personlig baslinje':'Personal baseline'}</a><a href="#factors">${t[6]}</a><a href="#home">${t[8]}</a></div>`;

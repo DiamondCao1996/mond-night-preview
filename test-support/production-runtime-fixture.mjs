@@ -9,6 +9,9 @@ window.localStorage.setItem('mond-language',lang);
 for(const key of ['window','document','location','localStorage','sessionStorage','MutationObserver','Node','NodeFilter','Event','CustomEvent','HTMLElement','HTMLInputElement','HTMLSelectElement','FormData','FileReader'])Object.defineProperty(globalThis,key,{value:window[key],configurable:true,writable:true});
 window.scrollTo=()=>{};window.HTMLElement.prototype.scrollIntoView=()=>{};
 window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};window.HTMLDialogElement.prototype.close=function(){this.open=false;};
+window.HTMLMediaElement.prototype.play=async function(){Object.defineProperty(this,'paused',{value:false,configurable:true});this.dispatchEvent(new window.Event('play'));};
+window.HTMLMediaElement.prototype.pause=function(){Object.defineProperty(this,'paused',{value:true,configurable:true});this.dispatchEvent(new window.Event('pause'));};
+window.HTMLMediaElement.prototype.load=function(){};
 const intervals=[];globalThis.setInterval=(...args)=>{intervals.push(args);return intervals.length;};
 // Native imports execute the actual module graph, preserving query identity and order.
 for(const script of document.querySelectorAll('script[type="module"][src]'))await import(new URL(script.getAttribute('src'),root));
@@ -24,11 +27,22 @@ for(const selector of ['#baseline-dialog','.support-settings','.animal-picker'])
 const baseline=$('open-baseline'),connect=$('companion-connect'),quiet=$('quiet-mobile'),preference=document.querySelector('.support-settings input');
 assert.ok(baseline&&connect&&preference);assert.equal(typeof baseline.onclick,'function');assert.equal(typeof connect.onclick,'function');assert.equal(typeof preference.onchange,'function');
 const home=$('home-view').innerHTML;
+const music=$('music-card'),support=$('support-card');
+assert.ok(music&&support);
+const checkUtilities=()=>{
+ for(const [node,group] of [[music,'music'],[support,'support']]){
+  assert.equal($(node.id),node);assert.equal(document.querySelectorAll('#'+node.id).length,1);
+  assert.equal($('home-view').contains(node),false);
+  assert.equal($('settings-'+group).contains(node),true);
+ }
+};
+if(!['music','context'].includes(hash))checkUtilities();
+
 for(const l of ['zh-CN','sv','en',lang]){
  $('language').value=l;$('language').dispatchEvent(new window.Event('change'));await settle();checkLabels(l);
  for(const route of ['home','settings','companion','factors','device','preferences','baseline','care','tools','journal','rhythm','night','relax','feel','forest','safe-space','box-breathing','review']){
   await navigate(route);
-  const expected={factors:'settings',device:'settings',preferences:'settings',baseline:'settings',care:'companion',night:'rhythm'}[route]||route;visible(expected);checkLabels(l);
+  const expected={factors:'settings',device:'settings',preferences:'settings',baseline:'settings',care:'companion',night:'rhythm'}[route]||route;visible(expected);checkLabels(l);checkUtilities();
   if(expected==='settings'){
    assert.equal($('settings-controls').contains(connect),true);assert.equal($('settings-controls').contains(baseline),true);assert.equal($('settings-controls').contains(preference),true);
    assert.equal($('factors-view').hidden,route!=='factors');
@@ -45,5 +59,30 @@ $('settings-view').hidden=true;$('home-view').hidden=false;
 window.dispatchEvent(new window.Event('mond-tools-ready'));await settle();visible('settings');
 assert.equal($('open-baseline'),baseline);assert.equal($('companion-connect'),connect);assert.equal(document.querySelector('.support-settings input'),preference);
 assert.equal(document.querySelectorAll('#companion-view').length,1);assert.equal(document.querySelectorAll('#settings-view').length,1);
-await navigate('home');assert.ok($('home-view').querySelector('.hero'));assert.ok($('home-view').querySelector('.device-card'));assert.ok(home.includes('pet-scene'));for(const selector of ['.baseline-card','#support-card','#music-card'])assert.ok($('home-view').querySelector(selector),selector);
+await navigate('home');assert.ok($('home-view').querySelector('.hero'));assert.ok($('home-view').querySelector('.device-card'));assert.ok(home.includes('pet-scene'));assert.ok($('home-view').querySelector('.baseline-card'));checkUtilities();
+const activity=$('activity'),length=$('pause-length'),activityValue=activity.value;
+assert.equal(typeof activity.onchange,'function');
+const audio=$('mond-audio'),volume=$('music-volume'),play=$('music-play'),pause=$('music-pause'),auto=$('music-auto');
+const handlers=[play.onclick,pause.onclick,volume.oninput,auto.onchange];
+assert.ok(handlers.every(h=>typeof h==='function'));
+volume.value='37';volume.dispatchEvent(new window.Event('input'));volume.dispatchEvent(new window.Event('change'));await settle();
+assert.equal(audio.volume,0.37);
+play.click();await settle();assert.equal(audio.paused,false);pause.click();await settle();assert.equal(audio.paused,true);
+
+for(const route of ['music','context','music','context']){
+ await navigate(route);visible('tool-focus');
+ const node=route==='music'?music:support;
+ assert.equal($('tool-focus-view').firstElementChild,node);
+ window.dispatchEvent(new window.Event('mond-data-change'));await settle();
+ assert.equal($('tool-focus-view').contains(node),true);
+ $('language').value='sv';$('language').dispatchEvent(new window.Event('change'));await settle();
+ assert.equal($('tool-focus-view').contains(node),true);
+ assert.equal($('activity'),activity);assert.equal(activity.value,activityValue);
+ assert.equal($('pause-length'),length);assert.equal(length.value,'120');
+ assert.equal($('mond-audio'),audio);assert.equal(audio.volume,0.37);
+ assert.deepEqual([play.onclick,pause.onclick,volume.oninput,auto.onchange],handlers);
+ assert.ok($('suggestions').children.length);
+
+ await navigate('tools');checkUtilities();await navigate('settings');checkUtilities();
+}
 console.log(`production lifecycle passed ${lang} #${hash}`);dom.window.close();process.exit(0);
