@@ -2,9 +2,8 @@ import {revealView} from './engine/routes.js?v=4b8813b91065c7b605aa33228f88d0f3a
 import {FIRST_AID_DEFAULTS} from './engine/firstAid.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 import {mountChips,collapseOptional} from './suggestionChips.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 import {offerMomentCare} from './pmr.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {offerFirstAid} from './firstAid.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 import {EMOTION_WHEEL,findEmotion} from './engine/emotionWheel.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations,localDate,buildSessionLink,latestSavedMoment} from './engine/emotionLog.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations,localDate,buildSessionLink} from './engine/emotionLog.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 import {loadEmotions,loadNights,loadLogs,mergeLogsIntoNights} from './engine/store.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 import {generateSampleNights} from './engine/sampleData.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
 const copy={en:{entry:'Log a feeling',kicker:'A LITTLE ROOM FOR FEELING',pageTitle:'Log a feeling.',optional:'Your words are enough. Connecting MOND or importing nights can add body signals (HRV and sleep) alongside them, whenever you like. This is optional.',title:'A little room for your feelings.',intro:'Tap a color, then follow your words. You can stop and save at any level.',back:'← Back',save:'Keep this check-in',intensity:'Intensity (optional)',note:'A little note (optional)',skip:'Skip',history:'Your little check-ins',empty:'Your first little moment can start here.',del:'Delete',confirm:'Delete this emotion check-in from this browser?',distribution:'Your colors lately',days:'days',associations:'A curious look at nights',sample:'SAMPLE DATA',imported:'IMPORTED NIGHTS',small:'Not enough comparable data yet.',caption:'Same-date nights (starting on the check-in date), with this core vs other logged cores; at least 5 good-quality nights per group, from one device. Unadjusted exploratory look, not causal, not a diagnosis, and not a clinical mood or recovery score. No check-in is not evidence of an absent feeling.',privacy:'Your check-ins stay in this browser through local storage. No MOND cloud. Transcribed from a printed wheel; not a mood diagnosis or validated psychological instrument.',teaser:'How is your little world feeling?',cta:'Open the emotion compass →',selected:'Choose a color',saved:'A little moment, saved.',sleep:'Sleep (min)',with:'With / other'},'zh-CN':{entry:'记录情绪',kicker:'给心情一点空间',pageTitle:'记录情绪。',optional:'只写下感受就很好。你也可以连接 MOND 或导入夜晚，在文字旁添上身体信号（HRV 和睡眠）——完全可选，不影响保存心情。',title:'给心情留一点空间。',intro:'轻点颜色，慢慢寻找贴近你的词。任何一层都可以停下保存。',back:'← 返回',save:'保存这份心情',intensity:'强度（可选）',note:'写一点点（可选）',skip:'跳过',history:'你的心情小记',empty:'从此刻开始，留下一点感受。',del:'删除',confirm:'从此浏览器删除这条心情记录？',distribution:'最近的心情色彩',days:'天',associations:'好奇地看看夜晚',sample:'示例数据',imported:'已导入夜晚',small:'可比数据尚不足。',caption:'按同日期匹配（夜晚从记录当天开始），比较有此核心情绪与其他已记录核心情绪的夜晚；同一设备，两组各需至少5个质量良好的夜晚。未经调整的探索性观察，非因果、非诊断，也不是临床情绪或恢复评分。没有记录不代表没有感受。',privacy:'通过本地存储，仅保存在此浏览器，无 MOND 云端。词汇转录自印刷情绪轮；不是情绪诊断或经过验证的心理量表。',teaser:'你的小小世界，此刻感觉如何？',cta:'打开情绪罗盘 →',selected:'选一种颜色',saved:'小小心情，已保存。',sleep:'睡眠（分钟）',with:'此情绪 / 其他'}};
@@ -35,7 +34,7 @@ function render(){
  root.querySelector('#emotion-back')?.addEventListener('click',()=>{trail.pop();render();});
  root.querySelector('#emotion-note').oninput=e=>note=e.target.value;root.querySelector('#emotion-intensity').onchange=e=>intensity=e.target.value;
  mountChips(root.querySelector('#emotion-note'),{field:'note',path:trail});collapseOptional(root.querySelector('#emotion-note'));
- root.querySelector('form').onsubmit=e=>{e.preventDefault();if(!trail.length)return;try{const saved=addEmotion({path:trail,intensity:intensity?Number(intensity):undefined,note});trail=[];note='';intensity=String(FIRST_AID_DEFAULTS.intensity);message='saved';render();offerFirstAid(saved.at(-1));}catch(error){root.querySelector('[role="status"]').textContent=error.message;}};
+ root.querySelector('form').onsubmit=e=>{e.preventDefault();if(!trail.length)return;try{const saved=addEmotion({path:trail,intensity:intensity?Number(intensity):undefined,note});trail=[];note='';intensity=String(FIRST_AID_DEFAULTS.intensity);message='saved';render();offerMomentCare(null,saved.at(-1));}catch(error){root.querySelector('[role="status"]').textContent=error.message;}};
  root.querySelectorAll('[data-delete-emotion]').forEach(btn=>btn.onclick=()=>{if(confirm(t.confirm)){deleteEmotion(btn.dataset.deleteEmotion);render();}});
 }
 const refresh=()=>queueMicrotask(render);
@@ -51,7 +50,7 @@ function sessionSummary(session,lang,details=false) {
  if(details&&Number.isFinite(session.elapsed))parts.push(`${Math.floor(session.elapsed)} ${zh?'秒':'seconds'}`);
  return parts.join(' · ');
 }
-function openMomentCompass(moment) {
+function openMomentCompass(moment,careContext) {
  const dialog=document.createElement('dialog');dialog.className='moment-compass emotion-panel';
  dialog.setAttribute('aria-labelledby','moment-compass-title');
  // This trail and form state belong only to this saved moment.
@@ -78,25 +77,15 @@ function openMomentCompass(moment) {
    dialog.close();
   }catch(error){dialog.querySelector('[role="alert"]').textContent=error.message;}};
  };
- dialog.addEventListener('close',()=>{dialog.remove();offerMomentCare(moment,savedEntry);},{once:true});
+ dialog.addEventListener('close',()=>{dialog.remove();offerMomentCare(moment,savedEntry,careContext);},{once:true});
  const languageChange=()=>draw();window.addEventListener('mond-language-change',languageChange);
  dialog.addEventListener('close',()=>window.removeEventListener('mond-language-change',languageChange),{once:true});
  document.body.append(dialog);draw();dialog.showModal();
 }
-function wrapMomentSave() {
- const button=document.getElementById('save-note'),noteDialog=document.getElementById('note-dialog');
- if(noteDialog)mountChips(noteDialog.querySelector('#note'),{field:'sessionNote'});
- if(!button?.onclick||!noteDialog)return;
- const original=button.onclick;let saving=false;
- button.onclick=async function(event){
-  if(saving||button.disabled||!noteDialog.open)return;
-  saving=true;const previous=latestSavedMoment();
-  try {
-   await original.call(this,event);
-   const moment=latestSavedMoment();
-   if(!noteDialog.open&&!document.getElementById('note-error')?.textContent.trim()&&moment?.id!==previous?.id&&moment?.session?.events)openMomentCompass(moment);
-  }finally{saving=false;}
- };
-}
-// Module scripts run after parsing; defer until the bundle has installed its handlers.
-if(document.readyState==='complete')wrapMomentSave();else window.addEventListener('load',wrapMomentSave,{once:true});
+// Use the actual successful save result on web, bridge and native filesystem paths.
+window.addEventListener('mond-moment-saved',event=>{
+ const data=event.detail;
+ if(data?.moment?.session?.events)openMomentCompass(data.moment,data);
+});
+const noteDialog=document.getElementById('note-dialog');
+if(noteDialog)mountChips(noteDialog.querySelector('#note'),{field:'sessionNote'});

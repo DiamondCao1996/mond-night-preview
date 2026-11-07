@@ -39,17 +39,4 @@ test('PMR completion round-trips with optional fields empty, validates, and clea
 test('combined invitation recommends PMR and keeps emotion strategy secondary; standalone aid survives',()=>{
  const entry={path:[{id:'anger'}],intensity:3};const both=momentInvitation({session:session(),profile,entry});assert.equal(both.primary.id,'pmr');assert.equal(both.alternative.id,'forest-leaves');assert.equal(momentInvitation({entry}).primary.id,'forest-leaves');assert.equal(momentInvitation({session:session(),profile}).alternative,null);
 });
-test('combined invitation renders exactly one primary action and quiet alternatives',async()=>{
- const previous={document:globalThis.document,window:globalThis.window,location:globalThis.location,localStorage:globalThis.localStorage};let dialog;
- const node=()=>({addEventListener(type,fn){this[type]=fn;},textContent:'',value:'en',focus(){}});
- const elements=new Map(),nodes=new Map();const get=id=>{if(!elements.has(id))elements.set(id,node());return elements.get(id);};
- const host=get('relax-view');host.querySelector=selector=>{if(!nodes.has(selector))nodes.set(selector,node());return nodes.get(selector);};host.querySelectorAll=()=>[];
- globalThis.document={addEventListener(){},querySelectorAll:()=>[],documentElement:{lang:'en'},getElementById:get,createElement:()=>dialog={nodes:new Map(),setAttribute(){},querySelector(selector){if(!this.nodes.has(selector))this.nodes.set(selector,node());return this.nodes.get(selector);},addEventListener(){},showModal(){},close(){},remove(){},innerHTML:''},body:{append(){}}};
- globalThis.window={addEventListener(){},removeEventListener(){},dispatchEvent(){}};let hash='#home';globalThis.location={get hash(){return hash;},set hash(value){hash=value.startsWith('#')?value:'#'+value;}};const storage=new Map([['mond-profile',JSON.stringify(profile)]]);globalThis.localStorage={getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value)};
- try{const {offerMomentCare}=await import('../assets/pmr.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5');offerMomentCare({session:session()},{path:[{id:'anger'}],intensity:3});assert.equal((dialog.innerHTML.match(/class="primary"/g)||[]).length,1);assert.match(dialog.innerHTML,/class="text-button" data-aid/);assert.match(dialog.innerHTML,/class="text-button" data-no/);
- dialog.querySelector('[data-pmr]').onclick();assert.match(host.innerHTML,/Begin practice/);
- host.querySelector('[data-next]').click();
- for(let i=0;i<10;i++){assert.match(host.innerHTML,new RegExp(PMR_ZONES[i].en));for(let phase=0;phase<3;phase++)host.querySelector('[data-next]').click();}
- assert.match(host.innerHTML,/Non-judgmental awareness/);host.querySelector('[data-next]').click();assert.match(host.innerHTML,/Did your attention wander/);host.querySelector('[data-next]').click();assert.match(host.innerHTML,/Your practice is saved/);assert.equal(loadPmr().at(-1).source,'invitation');assert.equal(loadPmr().at(-1).completedZoneIds.length,10);}
- finally{for(const [key,value]of Object.entries(previous)){if(value===undefined)delete globalThis[key];else globalThis[key]=value;}}
-});
+// Unified dialog and the complete PMR UI lifecycle run in the production jsdom harness.

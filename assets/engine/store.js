@@ -27,6 +27,7 @@ export function loadNights() {
 export const saveImportedNights=n=>write('nights',n);
 export function clearAllFactorData() {
   for(const name of ['profile','logs','nights','emotions','first-aid','pmr']) {memory.delete(key(name)); if(typeof localStorage!=='undefined')localStorage.removeItem(key(name));}
+  if(typeof localStorage!=='undefined')localStorage.removeItem('mond-workbook-practices');
   clearInnerReview();
   changed();
 }

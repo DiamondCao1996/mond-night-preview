@@ -14,7 +14,8 @@ test('records aliases retain journal and review; night/rhythm aliases share dest
  for(const hash of ['night','night-view','nights','rhythm','rhythm-view','live'])assert.equal(viewForHash('#'+hash,null),'rhythm');
 });
 test('tool inventory includes all five care tools and all existing companion utilities',()=>{
- assert.deepEqual(TOOLS.map(x=>x.route),['feel','forest','safe-space','box-breathing','relax','pause','music','context','baseline']);
+ assert.deepEqual(TOOLS.slice(0,9).map(x=>x.route),['feel','forest','safe-space','box-breathing','relax','pause','music','context','baseline']);
+ assert.equal(new Set(TOOLS.map(t=>t.route)).size,TOOLS.length);assert.equal(TOOLS.length,24);
  for(const tool of TOOLS){assert.equal(tool.titles.length,3);assert.equal(tool.descriptions.length,3);assert.notEqual(viewForHash('#'+tool.route,null),'home');}
  assert.ok(SENSOR_FREE_VIEWS.includes('tools'));
 });

@@ -1,5 +1,6 @@
+import {WORKBOOK_TOOLS} from './workbook.js';
 // These pages are always available, independent of device or saved data.
-export const SENSOR_FREE_VIEWS = Object.freeze(['settings', 'tools', 'journal', 'rhythm', 'review', 'relax', 'feel', 'safe-space', 'forest', 'box-breathing']);
+export const SENSOR_FREE_VIEWS = Object.freeze(['settings', 'tools', 'journal', 'rhythm', 'review', 'relax', 'feel', 'safe-space', 'forest', 'box-breathing', 'support-now', ...WORKBOOK_TOOLS.map(t=>t.route)]);
 
 export function viewForHash(hash, doc = globalThis.document) {
  const raw = String(hash || '').replace(/^#/, '');

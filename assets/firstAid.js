@@ -55,3 +55,9 @@ for(const event of ['hashchange','mond-language-change','storage'])window.addEve
 window.addEventListener('mond-data-change',()=>{if(!loadFirstAid().length&&step===5)reset();refresh();});
 document.getElementById('language')?.addEventListener('change',refresh);
 refresh();
+
+// Reuse existing defaults and practice entry without opening another invitation.
+window.addEventListener('mond-open-recommended-aid',event=>{
+ if(!invitationView(event.detail?.entry))return;
+ event.preventDefault();offerFirstAid(event.detail.entry,{strategyId:event.detail.strategyId,direct:true});
+});
