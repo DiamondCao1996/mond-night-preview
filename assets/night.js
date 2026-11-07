@@ -63,7 +63,9 @@ function render() {
   const lang = document.getElementById('language')?.value || document.documentElement.lang;
   const t = {...(copy[lang] || copy.en)};
   if(imported){t.sample=lang==='zh-CN'?'已导入数据':lang==='sv'?'Importerade data':'Imported data';t.intro=t.sample;t.baseline=t.sample;}
-  document.querySelector('nav [data-view="night"] span').textContent = t.nav;
+  // Night is nested in rhythm; older HTML may still provide a dedicated button.
+  const nightNav=document.querySelector('nav [data-view="night"] span');
+  if(nightNav)nightNav.textContent = t.nav;
   const x = {...(extra[lang] || extra.en)};
   if(imported){x.test=lang==='zh-CN'?'导入数据回测 · 平均绝对误差':lang==='sv'?'Test på importerade data · genomsnittligt absolut fel':'Imported-data backtest · mean absolute error';x.disclaimer=lang==='zh-CN'?'导入数据的研究预览预测，未经临床验证，不是医疗建议。仅可比的 sample-ppg 整夜 RMSSD 进入预测。':lang==='sv'?'Forskningsprognos på importerade data, inte kliniskt validerad eller medicinska råd. Endast jämförbar nattlig RMSSD från sample-ppg används.':'Research-preview forecasts on imported data, not clinically validated or medical advice. Only comparable sample-ppg overnight RMSSD informs forecasts.';}
   const result = runCAS(nights, {language: lang,profile:loadProfile()});
