@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {EMOTION_WHEEL as wheel,flattenWheel,findEmotion,wheelCounts} from '../assets/engine/emotionWheel.js';
-import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations,buildSessionLink,latestSavedMoment} from '../assets/engine/emotionLog.js';
-import {loadEmotions,loadNights,saveEmotions,clearAllFactorData} from '../assets/engine/store.js';
+import {EMOTION_WHEEL as wheel,flattenWheel,findEmotion,wheelCounts} from '../assets/engine/emotionWheel.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations,buildSessionLink,latestSavedMoment} from '../assets/engine/emotionLog.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {loadEmotions,loadNights,saveEmotions,clearAllFactorData} from '../assets/engine/store.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
 test('printed wheel has complete vocabulary and distinct identifiers',()=>{
  assert.equal(wheel.length,7);assert.deepEqual(wheel.map(n=>n.zh),['恐惧','愤怒','厌恶','悲伤','快乐','惊讶','消极']);assert.deepEqual(wheel.map(n=>n.children.length),[6,8,4,6,9,4,4]);
  const flat=flattenWheel();assert.equal(new Set(flat.map(n=>n.id)).size,flat.length);

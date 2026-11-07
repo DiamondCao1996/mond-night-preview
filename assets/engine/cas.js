@@ -1,5 +1,5 @@
-import {eventDelta} from './events.js';
-import {keys,priors,mean,good,values,baselines} from './baselines.js';
+import {eventDelta} from './events.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {keys,priors,mean,good,values,baselines} from './baselines.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
 const names=['observationQualityAgent','circadianSeasonAgent','sleepAgent','activityLoadAgent','behaviorEventAgent','personalDynamicsAgent'];
 const clip=(x,a,b)=>Math.max(a,Math.min(b,x));
 const limits=[[5,180],[30,120],[120,720],[0,40000]], noise=[3,1.5,25,1600];

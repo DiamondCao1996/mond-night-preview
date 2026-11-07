@@ -1,8 +1,8 @@
-import {revealView} from './engine/routes.js';
-import {FOREST_TREE_VARIANTS,forestTreeVariant,FOREST_LEAF_TIPS} from './forestTrees.js';
-import {mountChips,collapseOptional} from './suggestionChips.js';
-import {loadEmotions} from './engine/store.js';
-import {FIRST_AID_STRATEGIES,FIRST_AID_COPY,FIRST_AID_DEFAULTS,applyForestDefaults,saveForestExercise,loadFirstAid,deleteFirstAid} from './engine/firstAid.js';
+import {revealView} from './engine/routes.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {FOREST_TREE_VARIANTS,forestTreeVariant,FOREST_LEAF_TIPS} from './forestTrees.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {mountChips,collapseOptional} from './suggestionChips.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {loadEmotions} from './engine/store.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {FIRST_AID_STRATEGIES,FIRST_AID_COPY,FIRST_AID_DEFAULTS,applyForestDefaults,saveForestExercise,loadFirstAid,deleteFirstAid} from './engine/firstAid.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
 const forest=FIRST_AID_STRATEGIES.find(s=>s.id==='forest-leaves'),box=FIRST_AID_STRATEGIES.find(s=>s.id==='box-breathing');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const zh=()=> (document.getElementById('language')?.value||document.documentElement.lang)==='zh-CN';

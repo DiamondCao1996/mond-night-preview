@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {viewForHash} from '../assets/engine/routes.js';
-import {moveControl} from '../assets/destinations.js';
+import {viewForHash} from '../assets/engine/routes.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {moveControl} from '../assets/destinations.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
 test('six destinations retain order with Settings sixth and a single companion',async()=>{
  const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
  const nav=html.match(/<nav[\s\S]*?<\/nav>/)[0];
@@ -20,7 +20,7 @@ test('relocation keeps node identity, current values and listeners through repea
  assert.equal(calls,6);assert.equal(node.value,'user preference');assert.equal(node.parentNode,second);
 });
 test('refinement provides keyboard entry, return links and no persistence writes or forced setup',async()=>{
- const source=await readFile(new URL('../assets/destinations.js',import.meta.url),'utf8');
+ const source=await readFile(new URL('../assets/destinations.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca',import.meta.url),'utf8');
  assert.match(source,/focus\(\{preventScroll:true\}\)/);assert.match(source,/href='#settings'|href='#settings'/);assert.match(source,/href="#home"/);
  assert.doesNotMatch(source,/localStorage|setItem|removeItem|showModal/);
  for(const id of ['support-card','music-card','quiet-mobile','open-baseline'])assert.ok(source.includes(id));

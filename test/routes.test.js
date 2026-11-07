@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {SENSOR_FREE_VIEWS, viewForHash} from '../assets/engine/routes.js';
+import {SENSOR_FREE_VIEWS, viewForHash} from '../assets/engine/routes.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
 
 test('self-care routes open without a document, profile, sessions or sensor', () => {
  const previous = globalThis.localStorage;
@@ -65,6 +65,7 @@ test('inline cache guard reloads at most once per stamp and tolerates offline fe
  const {runInNewContext} = await import('node:vm');
  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
  const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+ const currentStamp=html.match(/window\.__MOND_V = '([^']+)'/)[1];
  const storage = new Map();let reloads=0;
  async function visit({missing=false, newer=false, offline=false}={}) {
   let ready;
@@ -73,7 +74,7 @@ test('inline cache guard reloads at most once per stamp and tolerates offline fe
    document:{addEventListener(event,fn){ready=fn;},getElementById:()=>missing?null:{},querySelector:()=>({})},
    sessionStorage:{getItem:key=>storage.get(key),setItem:(key,value)=>storage.set(key,value)},
    location:{reload(){reloads++;}},
-   fetch:async()=>{if(offline)throw Error('offline');return {ok:true,text:async()=>`window.__MOND_V = '${newer?'relax-open-2':'relax-open-1'}';`};}
+   fetch:async()=>{if(offline)throw Error('offline');return {ok:true,text:async()=>`window.__MOND_V = '${newer?'different-feature-version':currentStamp}';`};}
   });
   await ready();
  }

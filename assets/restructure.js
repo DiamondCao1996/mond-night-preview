@@ -1,7 +1,7 @@
-import {refineDestinations} from './destinations.js';
-import {loadBoards,themes,progress,updateBoard,persistBoard} from './engine/boards.js';
-import {TOOLS} from './engine/toolbox.js';
-import {viewForHash,revealView} from './engine/routes.js';
+import {refineDestinations} from './destinations.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {loadBoards,themes,progress,updateBoard,persistBoard} from './engine/boards.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {TOOLS} from './engine/toolbox.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
+import {viewForHash,revealView} from './engine/routes.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const copy={

@@ -1,4 +1,4 @@
-import {good, mean} from './baselines.js';
+import {good, mean} from './baselines.js?v=0bcdcddca02079702dc4a0b570473fccc7bacdca';
 export const DEFAULT_EXPOSURES = ['lateMeal','alcoholLogged','slowBreathing','workout','workStrain','workBreak','reading','meditation','lateActivity'];
 const shift = (date, days) => new Date(Date.parse(`${date}T12:00Z`) + days*86400000).toISOString().slice(0,10);
 // Calendar lag, never row lag: missing dates must not change the exposure window.
