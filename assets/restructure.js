@@ -1,3 +1,4 @@
+import {refineDestinations} from './destinations.js';
 import {loadBoards,themes,progress,updateBoard,persistBoard} from './engine/boards.js';
 import {TOOLS} from './engine/toolbox.js';
 import {viewForHash,revealView} from './engine/routes.js';
@@ -45,12 +46,13 @@ function render(){
   $('merged-nav').innerHTML=tabs([['rhythm',t.live,'live'],['night',t.night,'night'],['factors',lang==='zh'?'导入与数据':lang==='sv'?'Import & data':'Import & data','data']],['night','night-view','nights'].includes(raw)?'night':'live');
   if(['night','night-view','nights'].includes(raw))$('night-view').scrollIntoView?.({block:'start'});
  }
+ refineDestinations(lang,view,raw);
  const tool=TOOLS.find(x=>x.route===raw);if(view==='factors'){const a=document.createElement('a');a.className='tool-exit';a.href='#journal';a.textContent='← '+t.dashboard;$('factors-view').prepend(a);}
  if(tool){
 
   // Existing controls remain in place with their original handlers and persistence.
   const target={music:'music-card',context:'support-card',pause:'support-card',baseline:'open-baseline'}[raw];
-  if(target){const node=$(target)?.closest('.card');if(node){
+  if(target&&raw!=='baseline'){const node=$(target)?.closest('.card');if(node){
    let focus=$('tool-focus-view');if(!focus){focus=document.createElement('section');focus.id='tool-focus-view';focus.className='view';$('main').append(focus);}
    focusedNode=node;focusedParent=node.parentNode;focusedNext=node.nextSibling;focus.replaceChildren(node);revealView(focus);
    $('page-title').textContent=tool.titles[n];
@@ -62,5 +64,5 @@ for(const event of ['hashchange','mond-language-change','mond-tools-ready'])wind
 window.addEventListener('storage',()=>{model=loadBoards();lastBoardKey='';refresh();});
 $('language')?.addEventListener('change',refresh);
 // Async companion setup creates the original pause/music/baseline controls.
-window.addEventListener('mond-data-change',()=>{if(viewForHash(location.hash)==='journal'||(!focusedNode&&['pause','music','context','baseline'].includes(location.hash.slice(1))))refresh();});
+window.addEventListener('mond-data-change',()=>{refineDestinations(language(),viewForHash(location.hash),location.hash.slice(1));if(viewForHash(location.hash)==='journal'||(!focusedNode&&['pause','music','context','baseline'].includes(location.hash.slice(1))))refresh();});
 refresh();

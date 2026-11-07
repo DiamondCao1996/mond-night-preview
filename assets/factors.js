@@ -1,3 +1,4 @@
+import {viewForHash} from './engine/routes.js';
 import {FACTORS,evaluateFactor,EVIDENCE_STRENGTH_LABELS,literatureCell} from './engine/factors/index.js';
 import {generateSampleNights} from './engine/sampleData.js';
 import {personalAssociation,DEFAULT_EXPOSURES} from './engine/associations.js';
@@ -24,15 +25,13 @@ function status(f){if(f.id==='mentalHealth')return loadEmotions().length?`${t.co
 function healthField(name,title,type='text') {const h=profile.health||{};return `<div>${label(title,`<input name="${name}" type="${type}" value="${esc(h[name])}" ${h[name+'Declined']?'disabled':''}>`)}<label class="f-check"><input type="checkbox" name="${name}Declined" ${h[name+'Declined']?'checked':''}>${t.decline}</label></div>`;}
 function render(){
  lang=document.getElementById('language')?.value||document.documentElement.lang;t=words[lang]||words.en;
- document.querySelector('[data-view="factors"] span:last-child').textContent=t.nav;
- if(location.hash!=='#factors')return;
- document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!=='factors-view');document.querySelectorAll('nav [data-view]').forEach(b=>{const active=b.dataset.view==='factors';b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
- document.getElementById('section-kicker').textContent=t.kicker;document.getElementById('page-title').textContent=t.title;
+ if(viewForHash(location.hash)!=='settings')return;
+
  profile=loadProfile();const imported=loadNights();source=imported?t.imported:t.sample;nights=mergeLogsIntoNights(imported||generateSampleNights({endDate:yesterday()}),loadLogs());
  selectedDate=selectedDate||yesterday();selectedTypes=loadLogs().find(l=>l.date===selectedDate)?.types||[];
  const education=[['prefer-not-to-say',t.decline],...['secondary','bachelor','master','doctorate','other'].map(k=>[k,t[k]])];
  const view=document.getElementById('factors-view');
- view.innerHTML=`<div class="f-intro"><span class="pill">${source}</span><p>${t.privacy}</p></div>
+ view.innerHTML=`<h2>${t.title}</h2><div class="f-intro"><span class="pill">${source}</span><p>${t.privacy}</p></div>
  <article class="card f-panel"><h2>${t.profile}</h2><form id="f-profile"><div class="f-form-grid">${label(t.age,`<input name="age" type="number" min="18" max="90" value="${esc(profile.age)}">`)}${label(t.height,`<input name="heightCm" type="number" min="100" max="230" value="${esc(profile.heightCm)}">`)}${label(t.education,select('education',education,profile.education||'prefer-not-to-say'))}${label(t.detail,select('explanationDetail',[['brief',t.brief],['detailed',t.detailed]],profile.explanationDetail||'brief'))}</div>
  <details><summary>${t.health}</summary><label class="f-check"><input name="healthConsent" type="checkbox" ${profile.healthConsent?'checked':''}>${t.consent}</label><fieldset id="f-health" ${profile.healthConsent?'':'disabled'}><div class="f-form-grid">${healthField('knownConditions',t.conditions)}${healthField('medication',t.medication)}${healthField('wellbeingScore',t.wellbeing,'number')}</div><p>${t.helper}</p></fieldset></details><div class="f-actions"><button class="primary" type="submit">${t.save}</button><button class="outline" id="f-delete" type="button">${t.delete}</button></div></form></article>
  <article class="card f-panel"><h2>${t.log}</h2><form id="f-log">${label(t.date,`<input name="date" type="date" required value="${selectedDate}">`)}<div class="f-chips">${DEFAULT_EXPOSURES.map((e,i)=>`<label><input type="checkbox" name="event" value="${e}" ${selectedTypes.includes(e)?'checked':''}><span>${t.events[i]}</span></label>`).join('')}</div><p>${t.lognote}</p><button class="primary">${t.save}</button></form></article>
