@@ -3,15 +3,15 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {viewForHash} from '../assets/engine/routes.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
 import {moveControl} from '../assets/destinations.js?v=135e68fba5df30ade5cd1920aef10d008822562c';
-test('six destinations retain order with Settings sixth and a single companion',async()=>{
+test('five destinations retain order with care integrated at home',async()=>{
  const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
  const nav=html.match(/<nav[\s\S]*?<\/nav>/)[0];
- assert.deepEqual([...nav.matchAll(/data-view="([^"]+)"/g)].map(m=>m[1]),['home','rhythm','tools','journal','companion','settings']);
- assert.equal((html.match(/id="companion-view"/g)||[]).length,1);
+ assert.deepEqual([...nav.matchAll(/data-view="([^"]+)"/g)].map(m=>m[1]),['home','rhythm','tools','journal','settings']);
+ assert.equal((html.match(/id="companion-view"/g)||[]).length,0);
  assert.match(html,/id="settings-view"[\s\S]*id="factors-view"/);
 });
 test('care, companion, settings, device and factors bookmarks work without storage or sensor',()=>{
- for(const route of ['care','care-view','companion','companion-view'])assert.equal(viewForHash('#'+route,null),'companion');
+ for(const route of ['care','care-view','companion','companion-view'])assert.equal(viewForHash('#'+route,null),'home');
  for(const route of ['settings','settings-view','device','devices','device-view','preferences','baseline','factors','factors-view','advanced'])assert.equal(viewForHash('#'+route,null),'settings');
 });
 test('relocation keeps node identity, current values and listeners through repeated moves',()=>{
