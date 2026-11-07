@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {PMR_TRIGGER,PMR_ZONES,PMR_STEPS,sensorBaseline,pmrQuality,shouldOfferPmr,savePmrCompletion,loadPmr,momentInvitation} from '../assets/engine/pmr.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {clearAllFactorData} from '../assets/engine/store.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {PMR_TRIGGER,PMR_ZONES,PMR_STEPS,sensorBaseline,pmrQuality,shouldOfferPmr,savePmrCompletion,loadPmr,momentInvitation} from '../assets/engine/pmr.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {clearAllFactorData} from '../assets/engine/store.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
 const sample=(rmssd=40,mode='sensor')=>({mode,version:'mond-causal-1.1',window:180,stats:{rmssd_ms:rmssd,sdnn_ms:35,mean_hr_bpm:65}});
 const profile={schema:1,baselines:{sensor:[sample()],demo:[sample(100,'demo')]}};
 const session=()=>({mode:'sensor',status:'connected',stale:false,warming:false,processing_version:'mond-causal-1.1',elapsed:180,metrics:{rmssd:20},series:Array.from({length:181},(_,i)=>({time_s:i,event_index:i,corrected_ms:i%2?800:820,action:'unchanged'}))});

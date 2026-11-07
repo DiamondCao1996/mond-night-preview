@@ -12,7 +12,7 @@ try { window.localStorage.getItem('mond-storage-probe'); } catch {
  try { Object.defineProperty(window, 'localStorage', {value:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,String(v)),removeItem:k=>memory.delete(k)}, configurable:true}); } catch {}
 }
 
-window.__MOND_V = '4b8813b91065c7b605aa33228f88d0f3a05151a5';
+window.__MOND_V = '1f0587cd52bd4816df34e82a3707d09ebcbd834c';
 document.addEventListener('DOMContentLoaded', async function () {
   const stamp = window.__MOND_V;
   function reloadOnce() {
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
   if (!document.getElementById('relax-view') ||
       !document.getElementById('relax-open-home') ||
-      !document.querySelector('script[src*="/pmr.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5"]')) {
+      !document.querySelector('script[src*="/pmr.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"]')) {
     reloadOnce();
     return;
   }
@@ -41,24 +41,24 @@ document.addEventListener('DOMContentLoaded', async function () {
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f8f6f0"><title>MOND · Your quiet corner</title>
 <link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./mond-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MOND">
-  <script type="module" crossorigin src="./assets/index-DglhrX26.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-DMan32jA.css?v=4b8813b91065c7b605aa33228f88d0f3a05151a5">
-  <link rel="stylesheet" href="./assets/night.css?v=4b8813b91065c7b605aa33228f88d0f3a05151a5">
-  <script type="module" src="./assets/night.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5"></script>
-  <link rel="stylesheet" href="./assets/factors.css?v=4b8813b91065c7b605aa33228f88d0f3a05151a5">
-  <script type="module" src="./assets/factors.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5"></script>
-<link rel="stylesheet" href="./assets/feelings.css?v=4b8813b91065c7b605aa33228f88d0f3a05151a5">
-<script type="module" src="./assets/feelings.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5"></script>
-<link rel="stylesheet" href="./assets/firstAid.css?v=4b8813b91065c7b605aa33228f88d0f3a05151a5">
-<script type="module" src="./assets/firstAid.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5"></script>
-<link rel="stylesheet" href="./assets/pmr.css?v=4b8813b91065c7b605aa33228f88d0f3a05151a5">
-<script type="module" src="./assets/pmr.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5"></script>
-<link rel="stylesheet" href="./assets/review.css?v=4b8813b91065c7b605aa33228f88d0f3a05151a5">
-<script type="module" src="./assets/review.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5"></script>
-<link rel="stylesheet" href="./assets/restructure.css?v=4b8813b91065c7b605aa33228f88d0f3a05151a5">
-<script type="module" src="./assets/restructure.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5"></script>
-<link rel="stylesheet" href="./assets/workbook.css">
-<script type="module" src="./assets/workbook.js"></script>
+  <script type="module" crossorigin src="./assets/index-DglhrX26.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DMan32jA.css?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c">
+  <link rel="stylesheet" href="./assets/night.css?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c">
+  <script type="module" src="./assets/night.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"></script>
+  <link rel="stylesheet" href="./assets/factors.css?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c">
+  <script type="module" src="./assets/factors.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"></script>
+<link rel="stylesheet" href="./assets/feelings.css?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c">
+<script type="module" src="./assets/feelings.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"></script>
+<link rel="stylesheet" href="./assets/firstAid.css?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c">
+<script type="module" src="./assets/firstAid.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"></script>
+<link rel="stylesheet" href="./assets/pmr.css?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c">
+<script type="module" src="./assets/pmr.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"></script>
+<link rel="stylesheet" href="./assets/review.css?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c">
+<script type="module" src="./assets/review.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"></script>
+<link rel="stylesheet" href="./assets/restructure.css?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c">
+<script type="module" src="./assets/restructure.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"></script>
+<link rel="stylesheet" href="./assets/workbook.css?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c">
+<script type="module" src="./assets/workbook.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c"></script>
 </head>
 <body>
 <a href="#main" class="skip">Skip to content</a>

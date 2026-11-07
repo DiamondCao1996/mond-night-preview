@@ -1,9 +1,9 @@
-import {WORKBOOK_TOOLS,loadPractices,savePractice} from './engine/workbook.js';
-import {TOOLS} from './engine/toolbox.js';
-import {recommend,latestEmotion} from './engine/recommendations.js';
-import {loadEmotions} from './engine/store.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {latestSavedMoment} from './engine/emotionLog.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {revealView} from './engine/routes.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {WORKBOOK_TOOLS,loadPractices,savePractice} from './engine/workbook.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {TOOLS} from './engine/toolbox.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {recommend,latestEmotion} from './engine/recommendations.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {loadEmotions} from './engine/store.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {latestSavedMoment} from './engine/emotionLog.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {revealView} from './engine/routes.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const lang=()=>{const l=$('language')?.value||document.documentElement.lang;return l.startsWith('zh')?0:l==='sv'?2:1;};

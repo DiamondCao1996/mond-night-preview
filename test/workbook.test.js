@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {WORKBOOK_TOOLS,PRACTICE_KEY,loadPractices,savePractice} from '../assets/engine/workbook.js';
+import {WORKBOOK_TOOLS,PRACTICE_KEY,loadPractices,savePractice} from '../assets/engine/workbook.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 const run=promisify(execFile);

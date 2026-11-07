@@ -1,6 +1,6 @@
-import {EMOTION_WHEEL} from './emotionWheel.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {PMR_TRIGGER,pmrQuality} from './pmr.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {invitationForEntry} from './firstAid.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {EMOTION_WHEEL} from './emotionWheel.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {PMR_TRIGGER,pmrQuality} from './pmr.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {invitationForEntry} from './firstAid.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
 const day=86400000;
 export const RECOMMENDATION_POLICY={low:.8,pmr:PMR_TRIGGER.dropFraction,high:1.2,currentMaxAge:15*60000,baselineMaxAge:30*day,trendMaxAge:7*day,emotionMaxAge:day};
 const finitePositive=v=>Number.isFinite(v)&&v>0;

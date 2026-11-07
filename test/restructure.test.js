@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {BOARD_KEY,loadBoards,themes,updateBoard,persistBoard,progress} from '../assets/engine/boards.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {TOOLS} from '../assets/engine/toolbox.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {viewForHash,SENSOR_FREE_VIEWS} from '../assets/engine/routes.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
-import {loadEmotions,loadLogs,loadNights} from '../assets/engine/store.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5';
+import {BOARD_KEY,loadBoards,themes,updateBoard,persistBoard,progress} from '../assets/engine/boards.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {TOOLS} from '../assets/engine/toolbox.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {viewForHash,SENSOR_FREE_VIEWS} from '../assets/engine/routes.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {loadEmotions,loadLogs,loadNights} from '../assets/engine/store.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
 const storage=()=>{const map=new Map();return {map,writes:0,getItem:k=>map.get(k)??null,setItem(k,v){this.writes++;map.set(k,v);},removeItem:k=>map.delete(k)};};
 const change=(m,op,p,c)=>updateBoard(m,op,p,c);
 
@@ -74,14 +74,14 @@ test('invalid action linkage and blank actions cannot create orphan records',()=
 });
 
 test('merged source retains live controls, charts, connect, import, forecast and night rendering',async()=>{
- const html=await readFile(new URL('../index.html',import.meta.url),'utf8');const night=await readFile(new URL('../assets/night.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5',import.meta.url),'utf8');const overlay=await readFile(new URL('../assets/restructure.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5',import.meta.url),'utf8');const factors=await readFile(new URL('../assets/factors.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5',import.meta.url),'utf8');
+ const html=await readFile(new URL('../index.html',import.meta.url),'utf8');const night=await readFile(new URL('../assets/night.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c',import.meta.url),'utf8');const overlay=await readFile(new URL('../assets/restructure.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c',import.meta.url),'utf8');const factors=await readFile(new URL('../assets/factors.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c',import.meta.url),'utf8');
  const merged=html.slice(html.indexOf('<section id="rhythm-view"'),html.indexOf('<section id="relax-view"'));
  for(const id of ['merged-nav','live-section','chart2','duration','event-count','altered','sdnn','save-session','stop','export-live','night-view'])assert.ok(merged.includes(`id="${id}"`),id);
  assert.ok(!html.includes('id="night-view" class="view"'));assert.match(night,/runCAS/);assert.match(night,/loadNights/);assert.match(night,/#rhythm-view/);assert.match(overlay,/\['factors'.*Import & data/);assert.match(factors,/f-import-button/);
  for(const id of ['connect-top','connect-card','dialog-demo','scan'])assert.ok(html.includes(`id="${id}"`));
 });
 test('dashboard wiring separates toolbox from records and retains mood delete confirmation',async()=>{
- const html=await readFile(new URL('../index.html',import.meta.url),'utf8');const overlay=await readFile(new URL('../assets/restructure.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5',import.meta.url),'utf8');const feelings=await readFile(new URL('../assets/feelings.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5',import.meta.url),'utf8');const review=await readFile(new URL('../assets/review.js?v=4b8813b91065c7b605aa33228f88d0f3a05151a5',import.meta.url),'utf8');
+ const html=await readFile(new URL('../index.html',import.meta.url),'utf8');const overlay=await readFile(new URL('../assets/restructure.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c',import.meta.url),'utf8');const feelings=await readFile(new URL('../assets/feelings.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c',import.meta.url),'utf8');const review=await readFile(new URL('../assets/review.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c',import.meta.url),'utf8');
  assert.match(html,/data-view="tools"/);assert.match(html,/data-view="journal"/);assert.match(html,/id="dashboard-boards"/);assert.match(overlay,/href="#\$\{tool.route\}"/);assert.match(html,/id="toolbox-return"[^>]*href="#tools"/);
  assert.match(overlay,/form\.onsubmit/);assert.match(overlay,/commit\('vision'/);assert.match(overlay,/commit\('action'/);assert.match(overlay,/commit\('complete'/);assert.match(overlay,/commit\('reflection'/);assert.match(overlay,/window.confirm/);
  assert.match(review,/window.confirm\(deletion\[lang\].confirm\)/);assert.match(review,/review-mood-note/);assert.match(feelings,/location.hash!=='#feel'\?`<article class="card emotion-panel"><h2>\$\{t.history\}/);
