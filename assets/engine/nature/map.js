@@ -1,11 +1,13 @@
 const TILE_SIZE = 256;
+const MAX_LATITUDE = 85.05112878;
+const EARTH_CIRCUMFERENCE = 2 * Math.PI * 6378137;
 const tileOrigin = 'https://tile.openstreetmap.org';
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const worldSize = zoom => TILE_SIZE * 2 ** zoom;
 
 export function project({ lat, lon }, zoom) {
   const size = worldSize(zoom);
-  const latitude = clamp(lat, -85.05112878, 85.05112878) * Math.PI / 180;
+  const latitude = clamp(lat, -MAX_LATITUDE, MAX_LATITUDE) * Math.PI / 180;
   return { x: (lon + 180) / 360 * size, y: (1 - Math.asinh(Math.tan(latitude)) / Math.PI) / 2 * size };
 }
 export function unproject({ x, y }, zoom) {
@@ -64,10 +66,21 @@ export function createMap(host, tiles, onPick) {
         }
       }
     }
+    const markers = [];
     for (const point of points) {
       const p = project(point, zoom);
       const x = ((p.x - corner.x + worldSize(zoom) / 2) % worldSize(zoom) + worldSize(zoom)) % worldSize(zoom) - worldSize(zoom) / 2;
       const y = p.y - corner.y;
+      if (point.kind === 'origin' && Number.isFinite(point.accuracy) && point.accuracy > 0) {
+        const scale = worldSize(zoom) / (EARTH_CIRCUMFERENCE * Math.cos(clamp(point.lat, -MAX_LATITUDE, MAX_LATITUDE) * Math.PI / 180));
+        const diameter = 2 * point.accuracy * scale;
+        const circle = document.createElement('span');
+        circle.className = 'nature-accuracy';
+        circle.style.left = x + 'px';
+        circle.style.top = y + 'px';
+        circle.style.width = circle.style.height = diameter + 'px';
+        markers.unshift(circle);
+      }
       if (x < 0 || x > host.clientWidth || y < 0 || y > host.clientHeight) continue;
       const pin = document.createElement('span');
       pin.className = 'nature-pin';
@@ -76,8 +89,9 @@ export function createMap(host, tiles, onPick) {
       pin.style.top = y + 'px';
       pin.textContent = point.label;
       pin.title = point.name;
-      pins.append(pin);
+      markers.push(pin);
     }
+    for (const marker of markers) pins.append(marker);
   }
   function pick(x, y) {
     const corner = topLeft();

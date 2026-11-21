@@ -36,29 +36,50 @@ export function placeStore(storage, confirmAction, makeId = () => crypto.randomU
   };
 }
 
-export function bindLocation(button, geolocation, report, locate) {
+export function bindLocation(button, getGeolocation, isSecure, report, locate) {
+  let generation = 0;
+  const cancel = () => {
+    generation++;
+    button.disabled = false;
+  };
   button.addEventListener('click', () => {
-    if (!geolocation?.getCurrentPosition) {
-      report('unavailable');
-      return;
-    }
+    if (report('locating') === false) return;
+    const request = ++generation;
     button.disabled = true;
-    report('locating');
     const failure = error => {
-      button.disabled = false;
+      if (request !== generation) return;
+      cancel();
       report(({ 1: 'denied', 3: 'timeout' })[error?.code] || 'unavailable');
     };
+    if (!isSecure()) {
+      cancel();
+      report('insecure');
+      return;
+    }
     try {
-      geolocation.getCurrentPosition(({ coords }) => {
-        button.disabled = false;
-        const point = { lat: coords.latitude, lon: coords.longitude };
-        if (validPoint(point)) locate(point);
-        else failure();
-      }, failure, { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 });
+      const geolocation = getGeolocation();
+      if (typeof geolocation?.getCurrentPosition !== 'function') {
+        cancel();
+        report('unsupported');
+        return;
+      }
+      geolocation.getCurrentPosition(({ coords, timestamp }) => {
+        if (request !== generation) return;
+        const point = { lat: coords.latitude, lon: coords.longitude, source: 'actual' };
+        if (!validPoint(point)) {
+          failure();
+          return;
+        }
+        if (Number.isFinite(coords.accuracy) && coords.accuracy > 0) point.accuracy = coords.accuracy;
+        if (Number.isFinite(timestamp) && Math.abs(timestamp) <= 8.64e15) point.timestamp = timestamp;
+        cancel();
+        locate(point);
+      }, failure, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
     } catch {
       failure();
     }
   });
+  return cancel;
 }
 
 export function straightLine(a, b) {

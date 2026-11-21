@@ -1,5 +1,6 @@
 import fixture from './data/gothenburg-nature.json' with { type: 'json' };
-import { PLACES_KEY, bindLocation, categories, gasState, gases, hrvContext, placeStore, straightLine } from './engine/nature/model.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import { PLACES_KEY, bindLocation, categories, gasState, gases, hrvContext, placeStore, straightLine, validPoint } from './engine/nature/model.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import { approximateLocation } from './engine/nature/ip.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 import { createMap, TileConsent } from './engine/nature/map.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 import { word } from './engine/nature/words.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 import { revealView } from './engine/routes.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
@@ -28,6 +29,17 @@ host.innerHTML = `
         ${button('nature-locate', 'gps', 'aria-describedby="nature-gps-info"')}
         ${button('nature-demo', 'reset')}
       </div>
+      <p id="nature-ip-info">${label('ipInfo')}</p>
+      ${button('nature-ip', 'ipButton', 'aria-describedby="nature-ip-info"')}
+      <p id="nature-manual-info" class="small">${label('manualInfo')}</p>
+      <form id="nature-area-form" aria-describedby="nature-manual-info">
+        <div class="nature-fields">
+          <label>${label('lat')}<input type="number" inputmode="decimal" step="any" name="lat"></label>
+          <label>${label('lon')}<input type="number" inputmode="decimal" step="any" name="lon"></label>
+        </div>
+        <button type="submit" class="outline">${label('manualButton')}</button>
+      </form>
+      <p role="status" id="nature-manual-error"></p>
       <p role="status" id="nature-position-status"></p>
       <div class="nature-map">
         <div class="nature-tiles" aria-hidden="true"></div>
@@ -40,7 +52,7 @@ host.innerHTML = `
       <p class="small" id="nature-map-status" role="status"></p>
       <p class="small" id="nature-tile-info">${label('tilesInfo')}</p>
       ${button('nature-tiles-toggle', 'tilesOn', 'aria-describedby="nature-tile-info" aria-pressed="false"')}
-      <p class="small">${label('fixture')}</p>
+      <p class="small" id="nature-fixture-info">${label('fixture')}</p>
       <ol id="nature-fixtures" class="nature-list"></ol>
     </section>
     <div class="nature-stack">
@@ -82,6 +94,7 @@ host.innerHTML = `
 
 const form = $('#nature-place-form');
 const fields = form.elements;
+const areaForm = $('#nature-area-form');
 let actual = null;
 let positionStatus = '';
 let placeStatus = '';
@@ -89,7 +102,12 @@ let tileFailed = false;
 let editing = null;
 let active = false;
 let locationGeneration = 0;
-let pendingGeneration;
+let ipController;
+let tilesStoppedForArea = false;
+let showingPlace = false;
+let manualError = false;
+const inView = () => active && location.hash === '#nature';
+const locating = () => positionStatus === 'locating' || positionStatus === 'ipLocating';
 let simulationTime;
 const origin = () => actual || fixture.origin;
 const tiles = new TileConsent(() => {
@@ -108,7 +126,11 @@ const mapControls = {
   west: ['←', () => map.pan(-140, 0)], north: ['↑', () => map.pan(0, -140)],
   south: ['↓', () => map.pan(0, 140)], east: ['→', () => map.pan(140, 0)],
   zoomIn: ['+', () => map.zoom(1)], zoomOut: ['−', () => map.zoom(-1)],
-  center: ['◎', () => map.center(origin())]
+  center: ['◎', () => {
+    if (showingPlace) stopTiles(true);
+    showingPlace = false;
+    map.center(origin());
+  }]
 };
 function action(text, handler) {
   const item = document.createElement('button');
@@ -128,53 +150,103 @@ function refreshTileStatus() {
   const toggle = $('#nature-tiles-toggle');
   toggle.firstElementChild.textContent = t(tiles.enabled ? 'tilesOff' : 'tilesOn');
   toggle.setAttribute('aria-pressed', String(tiles.enabled));
-  $('#nature-map-status').textContent = t(tileFailed ? 'tileFailed' : tiles.enabled ? 'online' : 'offline');
+  toggle.disabled = locating();
+  const status = tileFailed ? 'tileFailed' : tiles.enabled ? 'online' : 'offline';
+  $('#nature-map-status').textContent = t(status) + (tilesStoppedForArea ? ' · ' + t('tilesArea') : '');
 }
 
-function stopTiles() {
+function stopTiles(areaChanged = false) {
   tiles.revoke();
   tileFailed = false;
+  tilesStoppedForArea ||= areaChanged;
   refreshTileStatus();
 }
 
 $('#nature-tiles-toggle').addEventListener('click', () => {
+  if (!inView() || locating()) return;
   tiles.toggle();
-  tileFailed = false;
+  tileFailed = tilesStoppedForArea = false;
   refreshTileStatus();
   map.draw();
 });
 
-bindLocation($('#nature-locate'), navigator.geolocation, status => {
-  if (status === 'locating' || pendingGeneration === undefined) {
-    pendingGeneration = locationGeneration;
-    stopTiles();
-    map.draw();
-  }
-  if (!active || pendingGeneration !== locationGeneration) return;
-  positionStatus = status;
-  if (status !== 'locating') {
-    pendingGeneration = undefined;
-    actual = null;
-    map.center(origin());
-  }
-  render();
-}, point => {
-  if (!active || pendingGeneration !== locationGeneration) return;
-  pendingGeneration = undefined;
-  stopTiles();
-  actual = point;
-  positionStatus = '';
-  map.center(point);
-  render();
-});
-
-$('#nature-demo').addEventListener('click', () => {
+function cancelLocation() {
   locationGeneration++;
-  actual = null;
+  cancelDevice();
+  ipController?.abort();
+  ipController = undefined;
+}
+
+function beginLocation(status) {
+  cancelLocation();
+  positionStatus = status;
+  stopTiles(tiles.enabled);
+  render();
+}
+
+function setArea(point) {
+  actual = point;
+  showingPlace = false;
   positionStatus = '';
-  stopTiles();
+  stopTiles(true);
   map.center(origin());
   render();
+}
+
+const cancelDevice = bindLocation($('#nature-locate'), () => navigator.geolocation,
+  () => window.isSecureContext === true, status => {
+    if (!inView()) return false;
+    if (status === 'locating') beginLocation(status);
+    else {
+      positionStatus = status;
+      render();
+    }
+    return true;
+  }, point => {
+    if (inView()) setArea(point);
+  });
+
+$('#nature-ip').addEventListener('click', async () => {
+  if (!inView()) return;
+  beginLocation('ipLocating');
+  const request = locationGeneration;
+  ipController = new AbortController();
+  const { point, status } = await approximateLocation((...args) => fetch(...args), ipController);
+  if (!inView() || request !== locationGeneration) return;
+  ipController = undefined;
+  if (point) setArea(point);
+  else {
+    positionStatus = status === 'aborted' ? '' : status;
+    render();
+  }
+});
+
+areaForm.addEventListener('submit', event => {
+  event.preventDefault();
+  if (!inView()) return;
+  const point = {
+    lat: areaForm.elements.lat.valueAsNumber,
+    lon: areaForm.elements.lon.valueAsNumber,
+    source: 'manualSource'
+  };
+  manualError = !validPoint(point);
+  if (manualError) {
+    render();
+    return;
+  }
+  cancelLocation();
+  setArea(point);
+});
+
+function clearAreaForm() {
+  areaForm.reset();
+  manualError = false;
+}
+
+$('#nature-demo').addEventListener('click', () => {
+  cancelLocation();
+  clearAreaForm();
+  setArea(null);
 });
 
 function edit(place, focus = false) {
@@ -229,7 +301,8 @@ function placeRow(place, details) {
 
 function showOnMap(place) {
   // A private saved place can be outside the area covered by the tile consent.
-  stopTiles();
+  showingPlace = true;
+  stopTiles(true);
   map.center(place);
   $('.nature-map').scrollIntoView({ block: 'nearest' });
 }
@@ -240,6 +313,8 @@ function renderPlaces() {
   const distance = point => straightLine(origin(), point);
   const relevant = fixture.places.map((place, index) => ({ ...place, label: String(index + 1) }))
     .filter(place => !actual || distance(place) <= 12);
+  const hasDemo = relevant.length > 0;
+  $('#nature-fixture-info').hidden = !hasDemo;
   const personal = places.map((place, index) => ({ ...place, label: 'P' + (index + 1) }));
   const distanceText = place => new Intl.NumberFormat(language.value, { maximumFractionDigits: 1 }).format(distance(place)) + ' ' + t('straight');
   const empty = message => Object.assign(document.createElement('li'), { textContent: message });
@@ -247,7 +322,7 @@ function renderPlaces() {
     const row = placeRow(place, distanceText(place));
     row.append(action(t('show'), () => showOnMap(place)));
     return row;
-  }) : [empty(t('noResults'))]));
+  }) : [empty(t('noDirectory'))]));
   $('#nature-personal-list').replaceChildren(...(personal.length ? personal.map(place => {
     const row = placeRow(place, place.note);
     const controls = document.createElement('div');
@@ -268,10 +343,9 @@ function renderPlaces() {
   const suggestions = [...relevant, ...personal.filter(p => ['park', 'water'].includes(p.kind))]
     .filter(place => distance(place) <= 12)
     .sort((a, b) => distance(a) - distance(b));
-  $('#nature-suggestion-list').replaceChildren(...(suggestions.length
-    ? suggestions.map(place => placeRow(place, [distanceText(place), t(place.id ? 'local' : 'fixture')].join(' · ')))
-    : [empty(t('noResults'))]));
-  const reference = { ...origin(), label: '◎', kind: 'origin', name: t(actual ? 'actual' : 'demo') };
+  $('#nature-suggestion-list').replaceChildren(...suggestions.map(place => placeRow(place, [distanceText(place), t(place.id ? 'local' : 'fixture')].join(' · '))),
+    ...(!hasDemo ? [empty(t('noDirectory'))] : []));
+  const reference = { ...origin(), label: '◎', kind: 'origin', name: t(actual?.source || 'demo') };
   map.points([...relevant, ...personal, reference]);
 }
 
@@ -316,8 +390,16 @@ function render() {
     node.setAttribute('aria-label', title);
   }
   for (const option of fields.kind.options) option.textContent = t(option.value);
-  $('#nature-area').textContent = t(actual ? 'actual' : 'demo');
-  $('#nature-demo').hidden = !actual && positionStatus !== 'locating';
+  const area = [t(actual?.source || 'demo')];
+  if (actual?.timestamp !== undefined) {
+    area.push(new Intl.DateTimeFormat(language.value, { dateStyle: 'medium', timeStyle: 'medium' }).format(actual.timestamp));
+  }
+  const number = new Intl.NumberFormat(language.value, { maximumSignificantDigits: 4 });
+  if (actual?.accuracy !== undefined) area.push(t('accuracy') + ' ±' + number.format(actual.accuracy) + ' ' + t('meters'));
+  if (actual?.accuracyKm !== undefined) area.push(t('accuracy') + ' ±' + number.format(actual.accuracyKm) + ' ' + t('kilometers'));
+  $('#nature-area').textContent = area.join(' · ');
+  $('#nature-demo').hidden = !actual && !locating();
+  $('#nature-manual-error').textContent = manualError ? t('manualInvalid') : '';
   $('#nature-position-status').textContent = positionStatus ? t(positionStatus) : '';
   $('#nature-hrv').textContent = hrvContext() === 'unknown' ? t('hrv') : '';
   refreshTileStatus();
@@ -334,7 +416,9 @@ function syncRoute() {
     active = true;
   } else if (active) {
     active = false;
-    locationGeneration++;
+    cancelLocation();
+    clearAreaForm();
+    tilesStoppedForArea = showingPlace = false;
     stopTiles();
     actual = null;
     positionStatus = placeStatus = '';

@@ -5,6 +5,7 @@ import { PLACES_KEY, ambientAdapter, bindLocation, gasState, gases, hrvContext, 
 import { createMap, project, TileConsent, unproject } from '../assets/engine/nature/map.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 import { word } from '../assets/engine/nature/words.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 import { SENSOR_FREE_VIEWS, viewForHash } from '../assets/engine/routes.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import { approximateLocation } from '../assets/engine/nature/ip.js';
 import fixture from '../assets/data/gothenburg-nature.json' with { type: 'json' };
 
 class Button extends EventTarget {
@@ -19,32 +20,78 @@ test('initialization makes zero position requests; explicit click requests one f
   const reports = [];
   const fixes = [];
   let attempts = 0, finish;
-  bindLocation(button, { getCurrentPosition(success, failure, options) {
+  bindLocation(button, () => ({ getCurrentPosition(success, failure, options) {
     attempts++;
     finish = success;
-    assert.deepEqual(options, { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 });
-  } }, status => reports.push(status), fix => fixes.push(fix));
+    assert.deepEqual(options, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+  } }), () => true, status => reports.push(status), fix => fixes.push(fix));
   assert.equal(attempts, 0);
   button.click();
   button.click();
   assert.equal(attempts, 1);
-  finish({ coords: { latitude: 57.7, longitude: 11.9 } });
-  assert.deepEqual(fixes, [{ lat: 57.7, lon: 11.9 }]);
+  finish({ coords: { latitude: 57.7, longitude: 11.9, accuracy: 24 }, timestamp: 1700000000000 });
+  assert.deepEqual(fixes, [{ lat: 57.7, lon: 11.9, source: 'actual', accuracy: 24, timestamp: 1700000000000 }]);
   assert.deepEqual(reports, ['locating']);
   assert.equal(button.disabled, false);
 });
 
-test('denial, timeout, device failure and absent geolocation are reported', () => {
-  for (const [code, status] of [[1, 'denied'], [2, 'unavailable'], [3, 'timeout'], [null, 'unavailable']]) {
+test('denial, timeout, device failure, insecure context and absent geolocation are reported', () => {
+  for (const [code, status] of [[1, 'denied'], [2, 'unavailable'], [3, 'timeout'], [null, 'unsupported'], [0, 'insecure']]) {
     const button = new Button();
     const reports = [];
     const geo = code && { getCurrentPosition(success, failure) { failure({ code }); } };
-    bindLocation(button, geo, value => reports.push(value), () => assert.fail('No position expected'));
+    bindLocation(button, () => {
+      assert.notEqual(status, 'insecure', 'Do not read the API in an insecure context');
+      return geo;
+    }, () => status !== 'insecure', value => reports.push(value),
+    () => assert.fail('No position expected'));
     assert.deepEqual(reports, []);
     button.click();
     assert.equal(reports.at(-1), status);
     assert.equal(button.disabled, false);
   }
+});
+
+test('GeoJS client validates requester-only JSON and discards the IP and extra fields', async () => {
+  const controller = new AbortController();
+  const result = await approximateLocation(async (url, options) => {
+    assert.equal(url, 'https://get.geojs.io/v1/ip/geo.json');
+    assert.deepEqual(options, {
+      signal: controller.signal, mode: 'cors', cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer'
+    });
+    return Response.json({ latitude: '39', longitude: '-101', accuracy: 40, ip: '192.0.2.1', city: 'Fixture' });
+  }, controller);
+  assert.deepEqual(result, { point: { lat: 39, lon: -101, source: 'ipSource', accuracyKm: 40 } });
+});
+
+test('GeoJS client handles invalid JSON, invalid coordinates, HTTP and network errors', async () => {
+  const run = fetch => approximateLocation(fetch, new AbortController());
+  assert.deepEqual(await run(async () => new Response('<html>')), { status: 'ipInvalid' });
+  for (const latitude of [null, 'NaN', ' ', true, '90.01']) {
+    assert.deepEqual(await run(async () => Response.json({ latitude, longitude: '-101' })), { status: 'ipInvalid' });
+  }
+  assert.deepEqual(await run(async () => Response.json({ latitude: '39', longitude: '-181' })), { status: 'ipInvalid' });
+  assert.deepEqual(await run(async () => new Response(null, { status: 503 })), { status: 'ipNetwork' });
+  assert.deepEqual(await run(async () => { throw new TypeError('Network or CORS'); }), { status: 'ipNetwork' });
+});
+
+test('GeoJS client aborts on timeout and rejects a response whose body arrives after cancellation', async () => {
+  const timeout = new AbortController();
+  const waitForAbort = (_, { signal }) => new Promise((resolve, reject) => {
+    signal.addEventListener('abort', () => reject(signal.reason), { once: true });
+  });
+  assert.deepEqual(await approximateLocation(waitForAbort, timeout, 1), { status: 'ipTimeout' });
+  assert.equal(timeout.signal.aborted, true);
+  const controller = new AbortController();
+  let finish;
+  const result = approximateLocation(async () => ({
+    ok: true,
+    json: () => new Promise(resolve => { finish = resolve; })
+  }), controller);
+  await Promise.resolve();
+  controller.abort();
+  finish({ latitude: '39', longitude: '-101' });
+  assert.deepEqual(await result, { status: 'aborted' });
 });
 
 test('markers persist through reinitialization; confirmation guards deletion and scoped clear', () => {

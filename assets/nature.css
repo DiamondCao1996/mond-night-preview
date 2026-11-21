@@ -32,6 +32,14 @@ body:has(#nature-view:not([hidden])) #source-badge { display: none; }
 .nature-tiles, .nature-pins { position: absolute; inset: 0; pointer-events: none; }
 .nature-tiles img { position: absolute; width: 256px; height: 256px; max-width: none; }
 .nature-north { position: absolute; top: .6rem; right: .65rem; background: #fffefa; border-radius: 1rem; padding: .25rem .55rem; }
+.nature-accuracy {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  border: 1px solid #3f6451;
+  border-radius: 50%;
+  background: #3f645126;
+}
 .nature-pin {
   position: absolute;
   transform: translate(-50%, -50%);
