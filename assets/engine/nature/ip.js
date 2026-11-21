@@ -1,4 +1,4 @@
-import { validPoint } from './model.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import { validPoint } from './model.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 
 const endpoint = 'https://get.geojs.io/v1/ip/geo.json';
 const coordinate = value => typeof value === 'string' && value.trim() ? Number(value) : value;

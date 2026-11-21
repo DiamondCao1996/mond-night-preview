@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {recommend,currentRmssd,qualifiedBaseline,sensorEvidence,latestEmotion} from '../assets/engine/recommendations.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {recommend,currentRmssd,qualifiedBaseline,sensorEvidence,latestEmotion} from '../assets/engine/recommendations.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 const now=Date.now();
 export const session=(value=40,id='current')=>({session_id:id,device:'MOND-test',mode:'sensor',status:'connected',stale:false,warming:false,processing_version:'mond-causal-1.1',elapsed:180,metrics:{rmssd:value},series:Array.from({length:181},(_,i)=>({time_s:i,event_index:i,corrected_ms:800+(i%2?value:0),action:'unchanged'}))});
 export const moment=(value=40,id='current',time=now)=>({id,session:session(value,id),saved_at:time/1000});

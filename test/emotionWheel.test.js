@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {EMOTION_WHEEL as wheel,flattenWheel,findEmotion,wheelCounts} from '../assets/engine/emotionWheel.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations,buildSessionLink,latestSavedMoment} from '../assets/engine/emotionLog.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {loadEmotions,loadNights,saveEmotions,clearAllFactorData} from '../assets/engine/store.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {EMOTION_WHEEL as wheel,flattenWheel,findEmotion,wheelCounts} from '../assets/engine/emotionWheel.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {addEmotion,deleteEmotion,emotionDistribution,exploreEmotionAssociations,buildSessionLink,latestSavedMoment} from '../assets/engine/emotionLog.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {loadEmotions,loadNights,saveEmotions,clearAllFactorData} from '../assets/engine/store.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 test('printed wheel has complete vocabulary and distinct identifiers',()=>{
  assert.equal(wheel.length,7);assert.deepEqual(wheel.map(n=>n.zh),['恐惧','愤怒','厌恶','悲伤','快乐','惊讶','消极']);assert.deepEqual(wheel.map(n=>n.children.length),[6,8,4,6,9,4,4]);
  const flat=flattenWheel();assert.equal(new Set(flat.map(n=>n.id)).size,flat.length);

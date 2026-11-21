@@ -1,8 +1,8 @@
-import {revealView} from './engine/routes.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {mountChips} from './suggestionChips.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {loadEmotions} from './engine/store.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {openForest,strategyLinks} from './forestAid.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {FIRST_AID_STRATEGIES,FIRST_AID_COPY,invitationView,applySafeSpaceDefaults,saveFirstAidExercise,loadFirstAid} from './engine/firstAid.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {revealView} from './engine/routes.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {mountChips} from './suggestionChips.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {loadEmotions} from './engine/store.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {openForest,strategyLinks} from './forestAid.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {FIRST_AID_STRATEGIES,FIRST_AID_COPY,invitationView,applySafeSpaceDefaults,saveFirstAidExercise,loadFirstAid} from './engine/firstAid.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const language=()=>document.getElementById('language')?.value||document.documentElement.lang;
 const text=()=>FIRST_AID_COPY[language()]||FIRST_AID_COPY.en;

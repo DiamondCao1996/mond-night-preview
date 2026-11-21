@@ -1,4 +1,4 @@
-import {WORKBOOK_TOOLS} from './workbook.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {WORKBOOK_TOOLS} from './workbook.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 // These pages are always available, independent of device or saved data.
 export const SENSOR_FREE_VIEWS = Object.freeze(['settings', 'tools', 'journal', 'rhythm', 'review', 'relax', 'feel', 'safe-space', 'forest', 'box-breathing', 'support-now', 'nature', ...WORKBOOK_TOOLS.map(t=>t.route)]);
 

@@ -1,4 +1,4 @@
-import {WORKBOOK_TOOLS} from './workbook.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {WORKBOOK_TOOLS} from './workbook.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 // Public launch inventory; none requires connecting a sensor.
 export const TOOLS=[
  {route:'feel',icon:'♡',titles:['情绪罗盘','Emotion compass','Känslokompass'],descriptions:['慢慢找到贴近此刻的词。','Find words close to this moment.','Hitta ord för den här stunden.']},

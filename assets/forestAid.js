@@ -1,8 +1,8 @@
-import {revealView} from './engine/routes.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {FOREST_TREE_VARIANTS,forestTreeVariant,FOREST_LEAF_TIPS} from './forestTrees.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {mountChips,collapseOptional} from './suggestionChips.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {loadEmotions} from './engine/store.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {FIRST_AID_STRATEGIES,FIRST_AID_COPY,FIRST_AID_DEFAULTS,applyForestDefaults,saveForestExercise,loadFirstAid,deleteFirstAid} from './engine/firstAid.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {revealView} from './engine/routes.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {FOREST_TREE_VARIANTS,forestTreeVariant,FOREST_LEAF_TIPS} from './forestTrees.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {mountChips,collapseOptional} from './suggestionChips.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {loadEmotions} from './engine/store.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {FIRST_AID_STRATEGIES,FIRST_AID_COPY,FIRST_AID_DEFAULTS,applyForestDefaults,saveForestExercise,loadFirstAid,deleteFirstAid} from './engine/firstAid.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 const forest=FIRST_AID_STRATEGIES.find(s=>s.id==='forest-leaves'),box=FIRST_AID_STRATEGIES.find(s=>s.id==='box-breathing');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const zh=()=> (document.getElementById('language')?.value||document.documentElement.lang)==='zh-CN';

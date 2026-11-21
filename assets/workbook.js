@@ -1,9 +1,9 @@
-import {WORKBOOK_TOOLS,loadPractices,savePractice} from './engine/workbook.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {TOOLS} from './engine/toolbox.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {recommend,latestEmotion} from './engine/recommendations.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {loadEmotions} from './engine/store.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {latestSavedMoment} from './engine/emotionLog.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {revealView} from './engine/routes.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {WORKBOOK_TOOLS,loadPractices,savePractice} from './engine/workbook.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {TOOLS} from './engine/toolbox.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {recommend,latestEmotion} from './engine/recommendations.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {loadEmotions} from './engine/store.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {latestSavedMoment} from './engine/emotionLog.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {revealView} from './engine/routes.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
 const lang=()=>{const l=$('language')?.value||document.documentElement.lang;return l.startsWith('zh')?0:l==='sv'?2:1;};

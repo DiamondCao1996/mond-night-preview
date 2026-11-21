@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { PLACES_KEY, ambientAdapter, bindLocation, gasState, gases, hrvContext, placeStore, straightLine } from '../assets/engine/nature/model.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import { createMap, project, TileConsent, unproject } from '../assets/engine/nature/map.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import { word } from '../assets/engine/nature/words.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import { SENSOR_FREE_VIEWS, viewForHash } from '../assets/engine/routes.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import { approximateLocation } from '../assets/engine/nature/ip.js';
+import { PLACES_KEY, ambientAdapter, bindLocation, gasState, gases, hrvContext, placeStore, straightLine } from '../assets/engine/nature/model.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import { createMap, project, TileConsent, unproject } from '../assets/engine/nature/map.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import { word } from '../assets/engine/nature/words.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import { SENSOR_FREE_VIEWS, viewForHash } from '../assets/engine/routes.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import { approximateLocation } from '../assets/engine/nature/ip.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 import fixture from '../assets/data/gothenburg-nature.json' with { type: 'json' };
 
 class Button extends EventTarget {
@@ -209,7 +209,7 @@ test('each gas reports separate units and disconnected, stale and simulated stat
 
 test('MOND retains all destinations with a responsive nature grid and six mobile nav cells', () => {
   const read = name => readFileSync(new URL('../' + name, import.meta.url), 'utf8');
-  const html = read('index.html'), css = read('assets/nature.css?v=668c190afb0d0074eb411e3a30d184f0a3f42443');
+  const html = read('index.html'), css = read('assets/nature.css?v=09e7679b548494dc31f64430cf673c4749b3f3c7');
   assert.ok(SENSOR_FREE_VIEWS.includes('nature'));
   assert.equal(viewForHash('#nature', null), 'nature');
   for (const view of ['home', 'rhythm', 'tools', 'journal', 'settings', 'nature']) {

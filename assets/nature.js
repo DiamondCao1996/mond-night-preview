@@ -1,9 +1,9 @@
 import fixture from './data/gothenburg-nature.json' with { type: 'json' };
-import { PLACES_KEY, bindLocation, categories, gasState, gases, hrvContext, placeStore, straightLine, validPoint } from './engine/nature/model.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import { approximateLocation } from './engine/nature/ip.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import { createMap, TileConsent } from './engine/nature/map.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import { word } from './engine/nature/words.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import { revealView } from './engine/routes.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import { PLACES_KEY, bindLocation, categories, gasState, gases, hrvContext, placeStore, straightLine, validPoint } from './engine/nature/model.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import { approximateLocation } from './engine/nature/ip.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import { createMap, TileConsent } from './engine/nature/map.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import { word } from './engine/nature/words.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import { revealView } from './engine/routes.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 
 const host = document.querySelector('#nature-view');
 host.setAttribute('translate', 'no');

@@ -1,6 +1,6 @@
-import {EMOTION_WHEEL,findEmotion} from './emotionWheel.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {loadFirstAid,saveFirstAid} from './store.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
-import {localDate} from './emotionLog.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {EMOTION_WHEEL,findEmotion} from './emotionWheel.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {loadFirstAid,saveFirstAid} from './store.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
+import {localDate} from './emotionLog.js?v=09e7679b548494dc31f64430cf673c4749b3f3c7';
 const bilingual=(zh,en)=>({zh,en});
 export const FIRST_AID_DEFAULTS={
  intensity:3,
