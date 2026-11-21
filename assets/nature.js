@@ -1,8 +1,8 @@
 import fixture from './data/gothenburg-nature.json' with { type: 'json' };
-import { PLACES_KEY, bindLocation, categories, gasState, gases, hrvContext, placeStore, straightLine } from './engine/nature/model.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
-import { createMap, TileConsent } from './engine/nature/map.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
-import { word } from './engine/nature/words.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
-import { revealView } from './engine/routes.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import { PLACES_KEY, bindLocation, categories, gasState, gases, hrvContext, placeStore, straightLine } from './engine/nature/model.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import { createMap, TileConsent } from './engine/nature/map.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import { word } from './engine/nature/words.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import { revealView } from './engine/routes.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 
 const host = document.querySelector('#nature-view');
 host.setAttribute('translate', 'no');

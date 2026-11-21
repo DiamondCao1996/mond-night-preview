@@ -1,4 +1,4 @@
-import {findEmotion} from './emotionWheel.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {findEmotion} from './emotionWheel.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 export const COLUMN_IDS=['emotion','behavior','body','belief','energy','step'];
 const day=86400000;
 // Calendar components preserve the runtime's local date, including across DST.

@@ -1,4 +1,4 @@
-import {eventDelta} from './events.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {eventDelta} from './events.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 // Synthetic correlated nights, not participant data. UTC avoids host timezone drift.
 export function generateSampleNights({seed=20261031,count=42,endDate=null}={}) {
   let s=seed>>>0;

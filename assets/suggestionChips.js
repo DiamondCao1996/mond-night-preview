@@ -1,4 +1,4 @@
-import {suggestionsFor,suggestionPrimary} from './engine/suggestions.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {suggestionsFor,suggestionPrimary} from './engine/suggestions.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 export function mountChips(input,{field,path=[],append=['note','sessionNote','occurrence'].includes(field)}={}) {
  if(!input||input.nextElementSibling?.classList.contains('suggest-chips'))return;
  const lang=document.getElementById('language')?.value||document.documentElement.lang,zh=lang==='zh-CN';

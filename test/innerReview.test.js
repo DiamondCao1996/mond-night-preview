@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {isoWeekKey,classifyWeek,saveReviewLine,loadInnerReview,suggestedSteps} from '../assets/engine/innerReview.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
-import {addEmotion} from '../assets/engine/emotionLog.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
-import {loadEmotions,clearAllFactorData} from '../assets/engine/store.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {isoWeekKey,classifyWeek,saveReviewLine,loadInnerReview,suggestedSteps} from '../assets/engine/innerReview.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {addEmotion} from '../assets/engine/emotionLog.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {loadEmotions,clearAllFactorData} from '../assets/engine/store.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 const week='2026-W45',date='2026-11-06';
 const emotion=(core,note='')=>({date,path:[{id:core}],note});
 test('local ISO weeks start Monday and cross years correctly',()=>{

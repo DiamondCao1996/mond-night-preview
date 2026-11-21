@@ -1,7 +1,7 @@
-import {refineDestinations} from './destinations.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
-import {loadBoards,themes,progress,updateBoard,persistBoard} from './engine/boards.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
-import {TOOLS,TOOL_GROUPS} from './engine/toolbox.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
-import {viewForHash,revealView} from './engine/routes.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
+import {refineDestinations} from './destinations.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {loadBoards,themes,progress,updateBoard,persistBoard} from './engine/boards.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {TOOLS,TOOL_GROUPS} from './engine/toolbox.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
+import {viewForHash,revealView} from './engine/routes.js?v=668c190afb0d0074eb411e3a30d184f0a3f42443';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const copy={
