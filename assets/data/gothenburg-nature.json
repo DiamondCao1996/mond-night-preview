@@ -1,0 +1,17 @@
+{
+  "area": "Gothenburg",
+  "origin": {"lat": 57.7069, "lon": 11.9679},
+  "status": "sample fixtures; not live-verified this run",
+  "reviewed": "2026-11-21",
+  "overpass": {"attempted": "2026-11-21", "status": "unreachable (DNS)", "source": "https://overpass-api.de/api/interpreter"},
+  "attribution": "© OpenStreetMap contributors",
+  "license": "ODbL 1.0",
+  "licenseUrl": "https://www.openstreetmap.org/copyright",
+  "coordinateMethod": "Representative points as published by Mapcarta; not entrance coordinates or surveyed centers.",
+  "places": [
+    {"name":"Vasaparken","kind":"park","lat":57.69832,"lon":11.97209,"osm":"way/4769341","tags":{"leisure":"park"},"source":"https://mapcarta.com/W4769341"},
+    {"name":"Renströmsparken","kind":"park","lat":57.695,"lon":11.98344,"osm":"way/41688069","tags":{"leisure":"park"},"source":"https://mapcarta.com/W41688069"},
+    {"name":"Gubberoparken","kind":"park","lat":57.71322,"lon":11.99905,"osm":"way/27429605","tags":{"leisure":"park"},"source":"https://mapcarta.com/W27429605"},
+    {"name":"Delsjöbadet","kind":"water","lat":57.68893,"lon":12.03507,"osm":"node/7056822444","tags":{"leisure":"bathing_place","sport":"swimming"},"source":"https://mapcarta.com/N7056822444"}
+  ]
+}

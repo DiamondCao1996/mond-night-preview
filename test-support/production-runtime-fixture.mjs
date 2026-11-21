@@ -15,18 +15,25 @@ window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};window.
 window.HTMLMediaElement.prototype.play=async function(){Object.defineProperty(this,'paused',{value:false,configurable:true});this.dispatchEvent(new window.Event('play'));};
 window.HTMLMediaElement.prototype.pause=function(){Object.defineProperty(this,'paused',{value:true,configurable:true});this.dispatchEvent(new window.Event('pause'));};
 window.HTMLMediaElement.prototype.load=function(){};
+// JSDOM has no layout engine or ResizeObserver.
+globalThis.ResizeObserver=class {observe(){}};
 const intervals=[];globalThis.setInterval=(...args)=>{intervals.push(args);return intervals.length;};
 // Native imports execute the actual module graph, preserving query identity and order.
 for(const script of document.querySelectorAll('script[type="module"][src]'))await import(new URL(script.getAttribute('src'),root));
 const settle=async()=>{for(let i=0;i<5;i++)await new Promise(r=>setTimeout(r,0));};
 await settle();
 const $=id=>document.getElementById(id);
-const navIds=['home','rhythm','tools','journal','settings'];
-const labels={en:['Home','Nights & rhythm','Toolbox','My dashboard','Settings'],'zh-CN':['首页','夜晚与节奏','工具箱','我的看板','设置'],sv:['Hem','Nätter & rytm','Verktygslåda','Min översikt','Inställningar']};
+const navIds=['home','rhythm','tools','nature','journal','settings'];
+const labels={en:['Home','Nights & rhythm','Toolbox','Nearby nature','My dashboard','Settings'],'zh-CN':['首页','夜晚与节奏','工具箱','身边的自然','我的看板','设置'],sv:['Hem','Nätter & rytm','Verktygslåda','Närnatur','Min översikt','Inställningar']};
 const checkLabels=l=>{assert.deepEqual([...document.querySelectorAll('nav [data-view]')].map(n=>n.dataset.view),navIds);for(const [i,id]of navIds.entries())assert.equal(document.querySelector(`nav [data-view="${id}"] span:last-child`).textContent,labels[l][i]);for(const b of document.querySelectorAll('nav [data-view]'))assert.equal(b.getAttribute('aria-label'),b.querySelector('span:last-child').textContent);};
 const navigate=async route=>{window.location.hash=route;await settle();};
 const visible=id=>{assert.equal($(id+'-view').hidden,false,id);assert.deepEqual([...document.querySelectorAll('.view')].filter(n=>!n.hidden).map(n=>n.id),[id+'-view']);};
 checkLabels(lang);
+if(hash==='nature'){
+ visible('nature');
+ assert.equal($('page-title').textContent,labels[lang][3]);
+ assert.equal($('nature-fixtures').children.length,4);
+}
 for(const selector of ['#baseline-dialog','.support-settings','.animal-picker'])assert.equal(document.querySelectorAll(selector).length,1,`single module initialization: ${selector}`);
 const baseline=$('open-baseline'),connect=$('companion-connect'),quiet=$('quiet-mobile'),preference=document.querySelector('.support-settings input');
 assert.ok(baseline&&connect&&preference);assert.equal(typeof baseline.onclick,'function');assert.equal(typeof connect.onclick,'function');assert.equal(typeof preference.onchange,'function');
@@ -46,10 +53,15 @@ if(!['music','context'].includes(hash))checkUtilities();
 
 for(const l of ['zh-CN','sv','en',lang]){
  $('language').value=l;$('language').dispatchEvent(new window.Event('change'));await settle();checkLabels(l);
- for(const route of ['home','settings','companion','companion-view','care-view','factors','device','preferences','baseline','care','tools','journal','rhythm','night','relax','feel','forest','safe-space','box-breathing','review']){
+ for(const route of ['home','settings','companion','companion-view','care-view','factors','device','preferences','baseline','care','tools','journal','rhythm','night','relax','feel','forest','safe-space','box-breathing','review','nature']){
   await navigate(route);
   const expected={factors:'settings',device:'settings',preferences:'settings',baseline:'settings',care:'home',companion:'home','care-view':'home','companion-view':'home',night:'rhythm'}[route]||route;visible(expected);checkLabels(l);checkUtilities();
   if(['care','care-view','companion','companion-view'].includes(route)){assert.equal(document.activeElement,$('home-care'));assert.equal(document.querySelector('nav [aria-current=page]').dataset.view,'home');}
+  if(expected==='nature'){
+   assert.equal($('page-title').textContent,labels[l][3]);
+   assert.equal(document.querySelector('nav [aria-current=page]').dataset.view,'nature');
+   assert.equal($('nature-fixtures').children.length,4);
+  }
   if(expected==='settings'){
    assert.equal($('settings-controls').contains(connect),true);assert.equal($('settings-controls').contains(baseline),true);assert.equal($('settings-controls').contains(preference),true);
    assert.equal($('factors-view').hidden,route!=='factors');
@@ -57,6 +69,9 @@ for(const l of ['zh-CN','sv','en',lang]){
   }
  }
 }
+await navigate('home');
+document.querySelector('nav [data-view="nature"]').click();
+await settle();assert.equal(location.hash,'#nature');visible('nature');
 await navigate('settings');connect.click();assert.equal($('connect-dialog').open,true);$('connect-dialog').close();baseline.click();assert.equal($('baseline-dialog').open,true);$('baseline-dialog').close();
 const was=quiet.getAttribute('aria-pressed');quiet.click();assert.notEqual(quiet.getAttribute('aria-pressed'),was);
 const storedBefore=JSON.stringify({...window.localStorage});const checked=preference.checked;preference.checked=!checked;preference.dispatchEvent(new window.Event('change'));await settle();assert.equal(preference.checked,!checked);assert.notEqual(JSON.stringify({...window.localStorage}),storedBefore);

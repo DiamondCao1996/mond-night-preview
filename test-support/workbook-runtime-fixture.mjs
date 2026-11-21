@@ -15,6 +15,8 @@ window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};window.
 window.HTMLMediaElement.prototype.play=async function(){Object.defineProperty(this,'paused',{value:false,configurable:true});this.dispatchEvent(new window.Event('play'));};
 window.HTMLMediaElement.prototype.pause=function(){Object.defineProperty(this,'paused',{value:true,configurable:true});this.dispatchEvent(new window.Event('pause'));};
 window.HTMLMediaElement.prototype.load=function(){};
+// JSDOM has no layout engine or ResizeObserver.
+globalThis.ResizeObserver=class {observe(){}};
 const intervals=[];globalThis.setInterval=(...args)=>{intervals.push(args);return intervals.length;};
 let bridgeCurrent,bridgeSaved=[],failSave=false;
 const now=Date.now();
@@ -40,7 +42,7 @@ const $=id=>document.getElementById(id);
 const stamp=document.querySelector('script[src*="/workbook.js"]').src.split('?v=')[1];
 const moduleURL=path=>new URL(path+(stamp?'?v='+stamp:''),root);
 const {WORKBOOK_TOOLS,loadPractices,PRACTICE_KEY}=await import(moduleURL('assets/engine/workbook.js'));
-const navIds=['home','rhythm','tools','journal','settings'];
+const navIds=['home','rhythm','tools','nature','journal','settings'];
 const navigate=async route=>{window.location.hash=route;await settle();};
 const visible=route=>{assert.deepEqual([...document.querySelectorAll('.view')].filter(n=>!n.hidden).map(n=>n.id),[route+'-view']);};
 assert.deepEqual([...document.querySelectorAll('nav [data-view]')].map(n=>n.dataset.view),navIds);

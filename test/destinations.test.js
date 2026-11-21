@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {viewForHash} from '../assets/engine/routes.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
 import {moveControl} from '../assets/destinations.js?v=1f0587cd52bd4816df34e82a3707d09ebcbd834c';
-test('five destinations retain order with care integrated at home',async()=>{
+test('destinations retain order with Nearby nature and care integrated at home',async()=>{
  const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
  const nav=html.match(/<nav[\s\S]*?<\/nav>/)[0];
- assert.deepEqual([...nav.matchAll(/data-view="([^"]+)"/g)].map(m=>m[1]),['home','rhythm','tools','journal','settings']);
+ assert.deepEqual([...nav.matchAll(/data-view="([^"]+)"/g)].map(m=>m[1]),['home','rhythm','tools','nature','journal','settings']);
  assert.equal((html.match(/id="companion-view"/g)||[]).length,0);
  assert.match(html,/id="settings-view"[\s\S]*id="factors-view"/);
 });
